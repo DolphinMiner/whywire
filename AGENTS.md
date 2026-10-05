@@ -12,6 +12,8 @@ are development material, not runtime requirements.
 - Follow existing methods before adding dependencies or a renderer.
 - Run `npm run check` for changes to examples, Mermaid, or packaging. Run
   `npm run check:install` when changing discovery, metadata, or installed resources.
-- Keep generated renderings, session logs, local installations, and private inputs
-  out of version control. `docs/cover.svg` is an editable authored source asset.
+- Keep temporary renderings, session logs, local installations, and private inputs
+  out of version control. The README demonstration images in `docs/previews/`
+  are intentional documentation assets; regenerate them with `npm run previews`.
+  `docs/cover.svg` is an editable authored source asset.
 - Do not publish, add a remote, or change global agent settings without a request.

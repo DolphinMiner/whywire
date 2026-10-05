@@ -11,18 +11,25 @@
   English · <a href="README.zh-CN.md">简体中文</a> · <a href="LICENSE">MIT</a>
 </p>
 
-Ask a question. Follow the path. Check the evidence.
-
-```text
-Use $whywire to explain what happens after a cache miss.
-Use $whywire to show why a deleted item comes back.
-Use $whywire to trace what this change does to the request flow.
-```
-
 Whywire helps an agent connect **trigger → boundary → state change → outcome**.
 Important arrows point back to code. Observations, inferences, and proposed
 changes stay distinguishable. The default output is Mermaid inside Markdown,
 so you can read, edit, and keep it alongside your code.
+
+## See what you get
+
+```text
+Use $whywire to explain why a deleted item comes back in this code.
+```
+
+An explanation you can inspect: **the causal diagram, the responsible write,
+source evidence, and an observable result.**
+
+![Whywire output preview: a late completion overwrites deletion; the diagram, source reference, and actual example output explain why.](docs/previews/late-result.png)
+
+Rendered from a runnable teaching case. The output is Markdown + Mermaid;
+presentation varies by agent. Read the [full explanation](examples/late-result/explanation.md)
+or inspect the [source](examples/late-result/app.py#L20-L27).
 
 ## A small example
 
@@ -30,6 +37,11 @@ so you can read, edit, and keep it alongside your code.
 
 **Answer:** `read_item` owns the cache-aside decision. The first call fills the
 cache; the next call returns from the hit branch before reaching the origin.
+
+![Whywire cache walkthrough: two reads return blue mug, while the actual run records one origin read.](docs/previews/cache-read.png)
+
+<details>
+<summary>View the editable Mermaid source</summary>
 
 ```mermaid
 sequenceDiagram
@@ -49,6 +61,8 @@ sequenceDiagram
     K-->>S: value
     S-->>C: value
 ```
+
+</details>
 
 Check the [implementation](examples/cache-read/app.py#L16-L25),
 [runnable assertion](examples/cache-read/app.py#L37-L41), and
@@ -118,7 +132,7 @@ skills/whywire/             The complete installable skill
   LICENSE                  License travels with copied installations
 examples/                  Three runnable cases and worked explanations
 scripts/                   Maintainer checks; not part of the skill runtime
-docs/                      Cover source and validation record
+docs/                      Cover, output previews, and validation record
 .github/                   CI and contribution templates
 ```
 

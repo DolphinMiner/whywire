@@ -19,8 +19,9 @@ production validation.
 | --- | --- | --- |
 | Dependency installation | Final lockfile installation completed with `npm ci`, followed by both repository checks. | Browser download was skipped in favor of installed Chrome. |
 | Three `app.py --check` programs | All passed at their caller-visible boundaries. | Synthetic fixtures, not live services or exhaustive concurrency tests. |
-| Local Markdown references | 40 inline file/line references resolved; installed skill references stayed inside its directory. | The checker does not prove a cited line supports a claim, or validate all Markdown syntax. |
+| Local Markdown references | 48 inline file/line references resolved after adding README previews; installed skill references stayed inside its directory. | The checker does not prove a cited line supports a claim, or validate all Markdown syntax. |
 | Packaged diagrams | Official CLI rendered all 8 Mermaid blocks in 6 Markdown files. | Syntax and renderability, not architectural truth. |
+| README previews | Two PNGs regenerated from the cache and late-result explanations, their Mermaid, and actual example stdout; visually inspected for clipping and legibility. | Documentation layout, not a native agent-app screenshot or a fixed output theme. |
 | Installed license | Root and installed MIT license files matched exactly. | No claim about trademark availability. |
 | Official skill discovery | Found one skill, `whywire`. | CLI discovery, not native host loading. |
 | Codex copied installation | All 5 files matched byte-for-byte, with no symlinks. | Temporary project installation only. |

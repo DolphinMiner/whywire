@@ -29,6 +29,17 @@ every Mermaid block with the official CLI. Rendered files stay in a temporary
 directory. If a browser is already available, set `PUPPETEER_EXECUTABLE_PATH`;
 otherwise Puppeteer installs its development browser during `npm ci`.
 
+To refresh the checked-in README previews after changing their examples:
+
+```sh
+npm run previews
+```
+
+This renders the existing Mermaid with the official CLI, runs each pictured
+example, and captures its diagram, explanation, and observed output in a
+documentation layout. Inspect both PNGs in `docs/previews/` before committing.
+They are worked-example previews, not screenshots of a particular agent app.
+
 For an isolated installer smoke test using the official CLI pinned in the
 development dependencies (no installer download after `npm ci`):
 

@@ -9,6 +9,7 @@
     "node": ">=22.20.0"
   },
   "scripts": {
+    "previews": "node scripts/render-previews.mjs",
     "check": "node scripts/check.mjs",
     "check:install": "node scripts/check-install.mjs"
   },

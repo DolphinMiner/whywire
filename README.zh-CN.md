@@ -13,15 +13,22 @@
 
 **Whywire**，读作「why-wire」，中文昵称「因果线」。顺着流程，看懂缘由。
 
-```text
-用 $whywire 解释缓存未命中之后发生了什么。
-用 $whywire 画出这个条目被删除后又出现的原因。
-用 $whywire 说明这个改动如何影响请求链路。
-```
-
 Whywire 帮助 Agent 串起 **触发 → 跨越边界 → 状态变化 → 可见结果**。
 重要的箭头有代码依据，观察结果、推断和改进提案分别说清楚。
 默认输出 Markdown 中的 Mermaid，可以直接阅读、修改，并和代码一起维护。
+
+## 用完会得到什么？
+
+```text
+用 $whywire 解释这段代码里，为什么删掉的条目又出现了。
+```
+
+得到一份可以核查的解释：**因果图、导致问题的写入位置、源码依据和可观察的结果。**
+
+![Whywire 效果预览：迟到结果覆盖删除状态，图解旁展示了源码位置和案例实际运行结果。](docs/previews/late-result.png)
+
+这是可运行教学案例的讲解预览。实际产物是 Markdown + Mermaid，显示样式取决于宿主。
+查看[完整解释](examples/late-result/explanation.md)和[对应源码](examples/late-result/app.py#L20-L27)。
 
 ## 看一个小例子
 
@@ -29,6 +36,11 @@ Whywire 帮助 Agent 串起 **触发 → 跨越边界 → 状态变化 → 可�
 
 **回答：** `read_item` 负责决定走缓存还是回源。第一次读取后填充缓存；
 第二次命中时直接返回，不再执行回源调用。
+
+![Whywire 缓存流程预览：两次都返回 blue mug，实际运行记录显示只回源一次。](docs/previews/cache-read.png)
+
+<details>
+<summary>查看可编辑的 Mermaid 源码</summary>
 
 ```mermaid
 sequenceDiagram
@@ -48,6 +60,8 @@ sequenceDiagram
     K-->>S: 命中
     S-->>C: 返回值
 ```
+
+</details>
 
 查看对应的[实现](examples/cache-read/app.py#L16-L25)、
 [可执行断言](examples/cache-read/app.py#L37-L41)和
@@ -110,7 +124,7 @@ skills/whywire/             完整可安装的 Skill
   LICENSE                  随安装副本分发的许可证
 examples/                  三个可运行案例及讲解
 scripts/                   维护者检查，不属于 Skill 运行时
-docs/                      封面源文件和验证记录
+docs/                      封面、效果预览和验证记录
 .github/                   CI 和贡献模板
 ```
 
