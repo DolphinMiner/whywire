@@ -1,0 +1,4 @@
+interface:
+  display_name: "Whywire"
+  short_description: "Trace code behavior into diagrams with evidence"
+  default_prompt: "Use $whywire to explain this code path with a compact diagram and source evidence."

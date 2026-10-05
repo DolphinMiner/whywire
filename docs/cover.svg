@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="480" viewBox="0 0 1200 480" role="img" aria-labelledby="title desc">
+  <title id="title">Whywire — Follow the flow. Understand the why.</title>
+  <desc id="desc">A continuous orange line links a trigger, a state change, and an outcome. Whywire turns code behavior into diagrams with evidence.</desc>
+  <rect width="1200" height="480" rx="24" fill="#152725"/>
+  <path d="M70 334H240Q268 334 268 306V278Q268 250 296 250H416Q444 250 444 278V306Q444 334 472 334H636Q664 334 664 306V278Q664 250 692 250H824Q852 250 852 278V306Q852 334 880 334H1130" fill="none" stroke="#f4a660" stroke-width="6" stroke-linecap="round"/>
+  <g fill="#152725" stroke="#f4a660" stroke-width="5">
+    <circle cx="150" cy="334" r="12"/><circle cx="554" cy="334" r="12"/><circle cx="1020" cy="334" r="12"/>
+  </g>
+  <text x="70" y="142" fill="#f7f4ec" font-family="Arial, Helvetica, sans-serif" font-size="86" font-weight="700" letter-spacing="-4">Whywire</text>
+  <text x="74" y="192" fill="#d2ddd7" font-family="Arial, Helvetica, sans-serif" font-size="27">Follow the flow. Understand the why.</text>
+  <g fill="#d2ddd7" font-family="Arial, Helvetica, sans-serif" font-size="22">
+    <text x="111" y="393">Trigger</text><text x="491" y="393">State change</text><text x="972" y="393">Outcome</text>
+  </g>
+  <text x="830" y="122" fill="#f4a660" font-family="Arial, Helvetica, sans-serif" font-size="21">Diagrams with evidence.</text>
+</svg>
