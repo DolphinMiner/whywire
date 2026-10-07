@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> · 简体中文 · <a href="LICENSE">MIT</a>
+  <a href="README.md">English</a> · 简体中文 · <a href="https://github.com/DolphinMiner/whywire">GitHub</a> · <a href="https://github.com/DolphinMiner/whywire/actions/workflows/check.yml">检查记录</a> · <a href="LICENSE">MIT</a>
 </p>
 
 **Whywire**，读作「why-wire」，中文昵称「因果线」。顺着流程，看懂缘由。
@@ -94,19 +94,19 @@ Skill 引导 Agent 阅读相关源码、检查关键边界、选择足够小的�
 下方的 `npx` 安装方式需要 Node.js 22.20+ 和 npm，手动复制不需要；
 Python 仅用于维护者检查。
 
-准备好这个仓库的本地副本，在你想使用它的项目中执行。
-把 `/path/to/whywire` 换成仓库的实际位置：
+在你想理解源码的项目中执行：
 
 ```sh
 cd /path/to/your-project
-npx --yes skills@1.7.0 add /path/to/whywire --skill whywire --agent codex --copy
+npx --yes skills@1.7.0 add DolphinMiner/whywire --skill whywire --agent codex --copy
 ```
 
 Claude Code 用户把 `--agent codex` 换成 `--agent claude-code`。
 这是项目级安装，不需要全局参数。如果当前会话没有发现新 Skill，可重新加载或启动会话。
 
-也可以把 **整个** `skills/whywire/` 复制到宿主的 Skill 目录，保留
-`references/`、`agents/` 和 `LICENSE`。
+如果使用本地副本，把命令中的 `DolphinMiner/whywire` 换成仓库的绝对路径，
+例如 `/path/to/whywire`。手动安装时，把 **整个** `skills/whywire/` 复制到宿主的
+Skill 目录，保留 `references/`、`agents/` 和 `LICENSE`。
 已验证的范围见[验证记录](docs/validation.md)；安装检查不等于所有宿主的原生发现流程或模型效果都已验证。
 
 ## 三个完整案例

@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  English · <a href="README.zh-CN.md">简体中文</a> · <a href="LICENSE">MIT</a>
+  English · <a href="README.zh-CN.md">简体中文</a> · <a href="https://github.com/DolphinMiner/whywire">GitHub</a> · <a href="https://github.com/DolphinMiner/whywire/actions/workflows/check.yml">Checks</a> · <a href="LICENSE">MIT</a>
 </p>
 
 Start with a scenario such as reading an item, signing in, or sending a message.
@@ -102,20 +102,21 @@ file-reading and optional rendering tools. The `npx` installer below needs
 Node.js 22.20+ and npm; manual copying does not. Python is only used by
 maintainer checks.
 
-From a local checkout of this repository, install into the project where you
-want to use it. Replace `/path/to/whywire` with the checkout's actual location:
+Run this from the project whose source you want to understand:
 
 ```sh
 cd /path/to/your-project
-npx --yes skills@1.7.0 add /path/to/whywire --skill whywire --agent codex --copy
+npx --yes skills@1.7.0 add DolphinMiner/whywire --skill whywire --agent codex --copy
 ```
 
 For Claude Code, replace `--agent codex` with `--agent claude-code`.
 These are project-scoped installs; no global flag is needed. Restart or reload
 your agent session if it does not discover the new skill immediately.
 
-Alternatively, copy the **entire** `skills/whywire/` directory into your agent's
-skill location. Keep its `references/`, `agents/`, and `LICENSE` together.
+For a local checkout, replace `DolphinMiner/whywire` in the command with its
+absolute path, such as `/path/to/whywire`. To install manually, copy the
+**entire** `skills/whywire/` directory into your agent's skill location. Keep its
+`references/`, `agents/`, and `LICENSE` together.
 See the [validation record](docs/validation.md) for what has actually been
 tested. Installation checks do not prove every host's native discovery or model
 behavior.

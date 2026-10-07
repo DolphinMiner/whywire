@@ -4,6 +4,14 @@
   "private": true,
   "description": "Understand architecture, one scenario at a time. An Agent Skill for source-backed request walkthroughs.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DolphinMiner/whywire.git"
+  },
+  "homepage": "https://github.com/DolphinMiner/whywire#readme",
+  "bugs": {
+    "url": "https://github.com/DolphinMiner/whywire/issues"
+  },
   "type": "module",
   "engines": {
     "node": ">=22.20.0"
