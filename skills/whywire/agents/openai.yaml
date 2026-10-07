@@ -1,4 +1,4 @@
 interface:
   display_name: "Whywire"
-  short_description: "Trace code behavior into diagrams with evidence"
-  default_prompt: "Use $whywire to explain this code path with a compact diagram and source evidence."
+  short_description: "Understand architecture through one request flow"
+  default_prompt: "Use $whywire to walk through this scenario from its entry point to its result, showing module responsibilities, data flow, and source references."

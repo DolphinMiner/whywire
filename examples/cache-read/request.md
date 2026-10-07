@@ -2,10 +2,11 @@
 
 This is a synthetic learning example, not a production service.
 
-Read `app.py` and explain what happens when the caller reads the same item twice.
-Use a compact diagram to make the responsibility of the cache and the origin
-clear. Support the explanation with source references and observations from a
-local run. State what the example does not establish about a real system.
+I am learning this codebase. Read `app.py` and walk through the scenario where
+the caller reads the same item twice, from the entry point to the returned value.
+Use a compact diagram to explain each component's responsibility, the data it
+passes, and the return path. Support the explanation with source references and
+observations from a local run. State what the example does not establish about a real system.
 
 Use `app.py` as the input. Leave `explanation.md` closed until you have written
 your own explanation; it is a worked example, not additional source evidence.

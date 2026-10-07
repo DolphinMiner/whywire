@@ -1,6 +1,6 @@
 # Two reads, one origin access
 
-The service owns the cache-aside decision. On a miss it reads the origin and
+`read_item` owns the cache-aside decision. On a miss it reads the origin and
 fills the cache before returning. The next read takes the cache branch, so the
 origin does not receive a second read.
 

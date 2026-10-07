@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-  <strong>把代码行为画成有依据的因果图。</strong><br>
-  用于架构讲解、问题分析和变更解释的 Agent Skill。
+  <strong>从一个场景、一条请求，看懂系统架构。</strong><br>
+  沿着请求梳理代码、模块职责与数据流转的 Agent Skill。
 </p>
 
 <p align="center">
@@ -13,31 +13,28 @@
 
 **Whywire**，读作「why-wire」，中文昵称「因果线」。顺着流程，看懂缘由。
 
-Whywire 帮助 Agent 串起 **触发 → 跨越边界 → 状态变化 → 可见结果**。
-重要的箭头有代码依据，观察结果、推断和改进提案分别说清楚。
-默认输出 Markdown 中的 Mermaid，可以直接阅读、修改，并和代码一起维护。
+从读取条目、用户登录、发送消息这样的具体场景出发，Whywire 沿着
+**用户操作 → 入口 → 模块调用 → 数据与状态变化 → 返回结果**，
+解释这个场景里的架构：谁负责什么、模块之间传什么、结果如何回到调用方。
+
+它首先用于理解项目、新人上手和梳理正常请求链路，也可以解释变更、分析故障。
+重要的箭头有代码依据，观察结果与推断分别说清楚；默认产物是可以编辑的 Markdown + Mermaid。
 
 ## 用完会得到什么？
 
 ```text
-用 $whywire 解释这段代码里，为什么删掉的条目又出现了。
+用 $whywire 梳理读取 item-1 的场景，从调用入口一直跟到结果返回。
+解释经过哪些模块、传递什么数据，以及再次读取时流程如何变化。
 ```
 
-得到一份可以核查的解释：**因果图、导致问题的写入位置、源码依据和可观察的结果。**
-
-![Whywire 效果预览：迟到结果覆盖删除状态，图解旁展示了源码位置和案例实际运行结果。](docs/previews/late-result.png)
-
-这是可运行教学案例的讲解预览。实际产物是 Markdown + Mermaid，显示样式取决于宿主。
-查看[完整解释](examples/late-result/explanation.md)和[对应源码](examples/late-result/app.py#L20-L27)。
-
-## 看一个小例子
-
-**问题：** 为什么读取两次都拿到了值，却只回源一次？
+得到的是：**请求时序、模块职责、数据与返回路径，以及继续读代码的入口。**
 
 **回答：** `read_item` 负责决定走缓存还是回源。第一次读取后填充缓存；
 第二次命中时直接返回，不再执行回源调用。
 
 ![Whywire 缓存流程预览：两次都返回 blue mug，实际运行记录显示只回源一次。](docs/previews/cache-read.png)
+
+这是使用进程内 Python 对象的可运行教学案例。实际产物是 Markdown + Mermaid，显示样式取决于宿主。
 
 <details>
 <summary>查看可编辑的 Mermaid 源码</summary>
@@ -46,8 +43,8 @@ Whywire 帮助 Agent 串起 **触发 → 跨越边界 → 状态变化 → 可�
 sequenceDiagram
     participant C as 调用方
     participant S as read_item
-    participant K as 缓存
-    participant O as 数据源
+    participant K as 缓存字典
+    participant O as 数据源对象
     C->>S: 第一次读取
     S->>K: 查询条目
     K-->>S: 未命中
@@ -67,11 +64,21 @@ sequenceDiagram
 [可执行断言](examples/cache-read/app.py#L37-L41)和
 [完整讲解](examples/cache-read/explanation.md)。完整讲解也说明了这个单进程案例的证明范围。
 
+## 也能用于排障
+
+理解正常链路之后，同样的方法也可以解释意外结果，例如：**「删掉的条目为什么又回来了？」**
+
+![Whywire 排障预览：时序图追踪迟到写入，旁边展示源码依据和实际运行结果。](docs/previews/late-result.png)
+
+查看[案例讲解](examples/late-result/explanation.md)和[对应源码](examples/late-result/app.py#L20-L27)。
+排障是可选用途；日常架构梳理不需要先有故障，也不要求提出修复方案。
+
 ## 什么情况下有用？
 
 | 你的问题 | 适合的产出 |
 | --- | --- |
 | 「点击发送之后发生了什么？」 | 一条具体执行链，标出边界和状态变化。 |
+| 「刚接手这个项目，一次读取是怎么完成的？」 | 从场景梳理模块职责、数据流转和源码入口。 |
 | 「这里为什么需要缓存或队列？」 | 解释它在已检查链路中的作用，以及依赖的假设。 |
 | 「删掉的内容为什么又回来了？」 | 机制、源码依据，以及能够区分不同解释的验证方法。 |
 | 「这个 PR 改变了什么？」 | 改动前后的流程，并区分已实现行为与提案。 |

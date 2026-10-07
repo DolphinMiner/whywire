@@ -3,42 +3,41 @@
 </p>
 
 <p align="center">
-  <strong>Turn code behavior into diagrams you can check.</strong><br>
-  An Agent Skill for architecture walkthroughs, causal explanations, and change reviews.
+  <strong>Understand your architecture, one scenario at a time.</strong><br>
+  An Agent Skill for following a request through code, modules, and data.
 </p>
 
 <p align="center">
   English · <a href="README.zh-CN.md">简体中文</a> · <a href="LICENSE">MIT</a>
 </p>
 
-Whywire helps an agent connect **trigger → boundary → state change → outcome**.
-Important arrows point back to code. Observations, inferences, and proposed
-changes stay distinguishable. The default output is Mermaid inside Markdown,
-so you can read, edit, and keep it alongside your code.
+Start with a scenario such as reading an item, signing in, or sending a message.
+Whywire follows **user action → entry point → module calls → data and state → result**
+to explain how the architecture works for that scenario: who does what, what
+crosses each boundary, and how the caller gets a response.
+
+Use it to learn a codebase, onboard a teammate, or document a normal request flow.
+It also helps explain changes and investigate bugs. Important arrows point back
+to code, with observations and inferences kept distinct. The default output is
+editable Mermaid inside Markdown.
 
 ## See what you get
 
 ```text
-Use $whywire to explain why a deleted item comes back in this code.
+Use $whywire to trace a read of item-1 from the caller to the returned value.
+Explain the modules, the data passed, and what changes on the next read.
 ```
 
-An explanation you can inspect: **the causal diagram, the responsible write,
-source evidence, and an observable result.**
-
-![Whywire output preview: a late completion overwrites deletion; the diagram, source reference, and actual example output explain why.](docs/previews/late-result.png)
-
-Rendered from a runnable teaching case. The output is Markdown + Mermaid;
-presentation varies by agent. Read the [full explanation](examples/late-result/explanation.md)
-or inspect the [source](examples/late-result/app.py#L20-L27).
-
-## A small example
-
-**Question:** Why do two calls return the value but read the origin only once?
+You get **a request sequence, module responsibilities, the data and return path,
+and source entry points** for exploring the implementation.
 
 **Answer:** `read_item` owns the cache-aside decision. The first call fills the
 cache; the next call returns from the hit branch before reaching the origin.
 
 ![Whywire cache walkthrough: two reads return blue mug, while the actual run records one origin read.](docs/previews/cache-read.png)
+
+Rendered from a runnable teaching case using in-process Python objects. The
+output is Markdown + Mermaid; presentation varies by agent.
 
 <details>
 <summary>View the editable Mermaid source</summary>
@@ -47,8 +46,8 @@ cache; the next call returns from the hit branch before reaching the origin.
 sequenceDiagram
     participant C as Caller
     participant S as read_item
-    participant K as Cache
-    participant O as Origin
+    participant K as Cache dict
+    participant O as Origin object
     C->>S: first read
     S->>K: look up item
     K-->>S: absent
@@ -69,11 +68,23 @@ Check the [implementation](examples/cache-read/app.py#L16-L25),
 [full explanation](examples/cache-read/explanation.md), including what this
 single-process example does **not** establish.
 
+## Also useful for debugging
+
+Once you understand a flow, you can use the same method to explain an unexpected
+result: **“Why does a deleted item come back?”**
+
+![Whywire debugging preview: the sequence diagram traces a late write, with source evidence and actual example output.](docs/previews/late-result.png)
+
+Read the [worked explanation](examples/late-result/explanation.md) and
+[source](examples/late-result/app.py#L20-L27). Failure analysis is optional;
+an ordinary architecture walkthrough does not need a bug or a proposed fix.
+
 ## When it helps
 
 | Your question | Useful output |
 | --- | --- |
 | “What happens after I click Send?” | One execution path with concrete boundaries and state changes. |
+| “I'm new to this repository. How is a read handled?” | A scenario walkthrough with module responsibilities, data flow, and source entry points. |
 | “Why is this cache or queue here?” | Its role in the inspected path and the assumptions behind that role. |
 | “Why did the item reappear?” | A causal mechanism, source evidence, and a check that distinguishes alternatives. |
 | “What does this PR change?” | Current and changed flows, with implemented behavior separated from proposals. |

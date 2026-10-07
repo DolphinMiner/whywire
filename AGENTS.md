@@ -1,6 +1,7 @@
 # Working on Whywire
 
-Whywire is a small instruction-based skill for source-backed causal explanations.
+Whywire is a small instruction-based skill for understanding architecture through
+source-backed scenario walkthroughs, with debugging as one optional use.
 The canonical skill is `skills/whywire/SKILL.md`; examples and repository tooling
 are development material, not runtime requirements.
 

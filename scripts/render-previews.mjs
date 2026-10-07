@@ -11,7 +11,7 @@ const temporary = await mkdtemp(path.join(tmpdir(), 'whywire-preview-'));
 const escape = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 const cases = [
   { name: 'late-result', question: 'Why does a deleted item come back?', evidence: 'Store.complete · app.py:20–27', scope: 'Ordered single-process demo. Concurrent writes are not tested.' },
-  { name: 'cache-read', question: 'Why do two reads hit the origin only once?', evidence: 'read_item · app.py:16–25', scope: 'In-memory Python objects. Expiry and concurrency are not tested.' },
+  { name: 'cache-read', question: 'How does a read request move through the code?', evidence: 'read_item · app.py:16–25', scope: 'In-memory Python objects. Expiry and concurrency are not tested.' },
 ];
 
 await mkdir(output, { recursive: true });

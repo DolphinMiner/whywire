@@ -2,7 +2,7 @@
   "name": "whywire",
   "version": "0.1.0",
   "private": true,
-  "description": "Follow the flow. Understand the why. An Agent Skill for diagrams with evidence.",
+  "description": "Understand architecture, one scenario at a time. An Agent Skill for source-backed request walkthroughs.",
   "license": "MIT",
   "type": "module",
   "engines": {

@@ -1,5 +1,23 @@
 # Validation record
 
+## Scenario walkthrough update — 2026-10-07
+
+Architecture and onboarding now default to a normal scenario walkthrough. Both
+READMEs lead with the cache-read flow; debugging remains an optional use. The
+cache preview was regenerated from its explanation, diagram, and actual run.
+
+A fresh agent received only the revised skill, the cache-read request, and its
+Python source. The answer traced the entry point, calls, data, component roles,
+and both return paths without inventing services or proposing an unrequested fix.
+It ran the example and its assertions, and its Mermaid rendered successfully
+with the official CLI. This is one qualitative trial on a synthetic fixture.
+
+Repository checks passed again: 48 local references, all three example checks,
+8 diagrams in 6 Markdown files, copied installations for Codex and Claude Code,
+and skill metadata validation. The updated preview was visually inspected.
+
+## Initial version — 2026-10-05
+
 Local first-version checks, 2026-10-05. These are packaging, example, rendering,
 and qualitative first-use checks. They are not a model-quality benchmark or
 production validation.
