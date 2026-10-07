@@ -29,6 +29,9 @@ every Mermaid block with the official CLI. Rendered files stay in a temporary
 directory. If a browser is already available, set `PUPPETEER_EXECUTABLE_PATH`;
 otherwise Puppeteer installs its development browser during `npm ci`.
 
+GitHub Actions uses the Ubuntu 24.04 runner's preinstalled Google Chrome with
+its sandbox enabled and skips Puppeteer's separate browser download.
+
 To refresh the checked-in README previews after changing their examples:
 
 ```sh

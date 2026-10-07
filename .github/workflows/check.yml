@@ -9,7 +9,11 @@ permissions:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    env:
+      # The runner's Chrome has Ubuntu's AppArmor sandbox profile.
+      PUPPETEER_EXECUTABLE_PATH: /opt/google/chrome/chrome
+      PUPPETEER_SKIP_DOWNLOAD: 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
