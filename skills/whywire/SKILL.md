@@ -1,6 +1,6 @@
 ---
 name: whywire
-description: Understand architecture through a concrete user scenario or request flow, with compact diagrams grounded in source. Use for codebase onboarding, tracing calls and data across modules, explaining component responsibilities, comparing changes, and investigating bugs. Use plain text when a diagram adds no clarity.
+description: Create a concise, source-backed HTML guide to an unfamiliar project, organized by product use cases and their request flows. Use for project onboarding, understanding how a user action works across modules, and finding code entry points. Answer small follow-up questions briefly without rebuilding the guide.
 license: MIT
 ---
 
@@ -8,109 +8,99 @@ license: MIT
 
 **Follow the flow. Understand the why.**
 
-Understand a system by following one scenario through its code. Every meaningful
-arrow should explain what happens, which component is responsible, and how the
-result reaches the caller. Debugging is one use, not a prerequisite.
+Help someone new to the project understand what the product does, how its main
+user scenarios work, and where to continue reading code. The main deliverable
+for a project walkthrough is **one self-contained HTML guide**, not a long chat
+response or separate source and preview documents. Honor an explicitly requested
+format. A small question can stay a short answer; debugging is optional.
 
-## Start with the scenario
+## Start with the product, then its scenarios
 
-Identify the actor, the action they take, and the outcome they want to understand.
-Start with the relevant entry point, its callers, state owner, and downstream consumers.
-Expand only far enough to explain that outcome. If scope is ambiguous, state
-a reasonable bounded interpretation; ask when competing interpretations
-would materially change the answer.
+Read enough product documentation, UI routes, entry points, and implementation
+to identify the audience, their actions, and the outcomes the product supports.
+Treat documentation as a lead to verify, not proof of current implementation.
+Name scenarios in the user's language: “Send a message and receive a reply”,
+not “Frontend”, “API service”, or a directory name.
 
-Choose the emphasis that fits the request:
+For a whole-project request, show the principal scenarios before following any
+single one. Usually 3–5 explain a useful first slice; use the number the product
+needs, and state what is outside this guide. Every included scenario needs its
+own complete path. Do not present a list of capabilities and trace only one.
+For a specific scenario request, go straight to that scenario without adding a
+tour of the rest of the product.
 
-- **Understand (default for architecture and onboarding):** follow a normal
-  scenario from entry to result, explaining each module's responsibility.
-- **Investigate:** separate the reported symptom from the observed mechanism.
-- **Compare:** distinguish current behavior from a proposed or verified change.
+## Trace each included scenario
 
-A diagram request does not authorize fixing code, querying production, or
-publishing artifacts. Use the access and permissions already granted.
-
-## Follow the causal path
-
-Trace:
+Follow source from the user's action to the visible outcome:
 
 ```text
-user action or trigger → entry point → calls and data → state changes → returned or delivered result
+user goal → entry point → module actions and data → state changes → result returned or delivered
 ```
 
-Orient the reader with a small component overview only when it helps locate the
-scenario. Then follow one representative path: who calls whom, what data crosses
-each boundary, what each module does, and how the result returns or arrives later.
-Show branches that change this scenario, such as a cache hit versus a miss.
-Keep unrelated modules and exhaustive failure analysis outside that walkthrough.
-A scenario explains one slice of the architecture; say what remains outside it.
+Read both ends of consequential handoffs. Explain what each component actually
+does and what crosses its boundary. Link the important steps to inspected files
+and symbols or verified lines. Preserve important alternatives, asynchronous
+handoffs, and return paths; an arrow must not invent order or guarantee delivery.
+Distinguish a saved request, completed execution, and a result visible to the user
+when those are separate facts. Explain the normal path first.
 
-Explain each component's role from the inspected behavior. Distinguish that role
-from inferred reasons for the design; do not invent the author's intent.
+Use [references/evidence.md](references/evidence.md) for source references and
+uncertain claims. Source-backed behavior is not a runtime observation. State
+the inspected revision and relevant dirty changes; never invent a deployment,
+file, line, test result, author intent, or business capability. If a required
+path cannot be traced, expose that specific gap instead of drawing through it.
 
-Use concrete operations and state names. `API → worker` is a relationship;
-`API commits pending → publishes job → worker claims pending` explains behavior.
-For important boundaries, inspect both ends. A successful send call alone
-does not establish consumption, persistence, or what the user sees after reload.
+## Edit for a first-time reader
 
-Follow the ordering in the source. Label concurrency, delayed callbacks,
-retries, and separate transactions when they matter; never turn them into an
-invented serial flow. Keep persisted state, cache, transport, and UI projections
-distinct. Name which component owns each consequential state transition.
+Keep the visible guide focused on these questions:
 
-## Ground the explanation
+- What is this product, who uses it, and what can they accomplish?
+- What happens after the action in this scenario?
+- Which module owns each step and how does the result reach the user?
+- Which code should I read or change next?
 
-Read [references/evidence.md](references/evidence.md) when citing code, tracing
-multiple repositories, comparing revisions, or investigating uncertain results.
+Lead with a one-sentence product explanation. Give each scenario a short goal,
+one compact flow, and brief step explanations with code entry points. Aim for
+5–8 steps when sufficient; preserve a necessary boundary rather than meeting a
+quota. Make each step an operation, not just a component name. Avoid repeating
+the same explanation in an introduction, table, diagram, and conclusion.
 
-- **Observed:** supported by a check actually run, with its scope and result.
-- **Source-backed:** supported by inspected code or configuration; not runtime proof.
-- **Inferred:** a plausible implication with its assumptions stated.
-- **Proposed:** a future path; not an implemented or tested result.
-- **Unknown:** the necessary source, environment, or observation is unavailable.
+Keep branches and longer source evidence expandable. Leave deployment commands,
+recovery matrices, audit findings, and test inventories out unless requested or
+necessary to explain the scenario. Deep source reading should produce a clear
+guide, not a transcript of the investigation.
 
-Link key transitions to a file plus symbol or verified line. State the revision
-when known and mention relevant dirty changes. Never invent a path, line,
-observation, test result, or deployment fact. With only a description, label the
-diagram a model of that description. Keep sensitive payloads out of examples.
+## Deliver one HTML
 
-## Draw the smallest useful view
+Read [references/guide.md](references/guide.md) and use the bundled template and
+zero-dependency builder. Fill a temporary JSON input with the inspected product,
+scenarios, flows, and sources. The helper renders **authored flow steps**; it
+does not discover architecture, execute requests, or render Mermaid.
 
-Default to Mermaid in Markdown. Prefer a sequence diagram for behavior over
-time, a state diagram for lifecycle transitions, and a flowchart for decisions
-or structural dependencies. Read [references/diagrams.md](references/diagrams.md)
-for syntax and compact examples.
+```sh
+node /path/to/whywire/scripts/build-guide.mjs /path/to/input.json /path/to/whywire.html
+```
 
-Aim for roughly 4–7 participants and 6–10 meaningful steps when they suffice.
-These are readability hints, not a requirement to omit a relevant boundary.
-Split a crowded view by question; show what was left out. Do not add databases,
-queues, services, or owners just to fill a familiar architecture template.
+Keep preparation files outside the repository unless the user asks to keep them.
+Deliver the HTML as the single reading entry point. Its content, diagrams,
+styles, and interactions must work offline with no sibling files or CDN. Keep
+source paths and symbols readable even when a source URL cannot be opened.
+Optional Mermaid source belongs inside a collapsed section of that same file;
+use [references/diagrams.md](references/diagrams.md) only when useful.
 
-Use exact identifiers where they matter and the reader's language for prose.
-Keep raw Mermaid source available. If rendering is unavailable, deliver the
-source and say it was not rendered; do not install tools just to force a preview.
-Use another output format when the user requests it and a suitable tool exists.
+If Node is unavailable, author the same standalone HTML directly using the
+template's reading structure; do not install tooling just to force a preview.
+If file output is unavailable, explain the limitation and give a compact inline
+guide without claiming an HTML artifact exists.
 
-## Make the explanation useful
+Before delivery, check scenario coverage, supporting source for key steps,
+input-to-result completeness, and local links or declared reference limitations.
+Open the actual HTML when a browser is available: check scenario navigation,
+expandable evidence, readable flow labels, and narrow-screen layout. If preview
+is unavailable, report it. Do not treat render or packaging checks as validation
+of the project's runtime behavior.
 
-Lead with the answer, then the diagram and the evidence needed to assess it.
-Include only the following parts that matter to the question:
-
-- the scenario, entry point, and path to the requested outcome;
-- module responsibilities, data passed, important state changes, and return paths;
-- source entry points for continuing to explore the code;
-- invariants, failure points, or discriminating checks when investigating behavior;
-- the smallest coherent change, if a change was requested.
-
-For a bug, explain why the mechanism produces the symptom and where ownership
-puts the fix. Do not announce a root cause until evidence distinguishes it from
-alternatives. For a proposal, identify what changes and what still needs proof.
-
-At an async handoff, distinguish durable state, external effect, and its
-acknowledgement. If their gap matters, show what is recoverable after a crash
-or ambiguous result. Commit-then-publish and blind retry are not universal
-solutions; neither is adding an outbox or a new state machine by default.
-
-For a simple architecture question, do not turn the answer into a full audit.
-Before delivery, check that each important arrow has support, facts and
-proposals are distinct, and the diagram answers the actual question.
+Finish with the product conclusion, the HTML link, and a short scope/verification
+note. Do not paste the whole guide into chat. Generate screenshots when requested
+or needed to demonstrate the output. Do not change project code or publish the
+guide merely because the source was readable.

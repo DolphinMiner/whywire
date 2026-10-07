@@ -8,7 +8,13 @@ with the smallest shareable source that makes the answer checkable.
 1. Explain the reader's question and the current failure.
 2. Add or update a small example with an observable outcome.
 3. Change only the instructions that improve that case without distorting others.
-4. Run the repository checks and inspect the rendered diagram.
+4. Run the repository checks and inspect the resulting HTML in a browser.
+
+For a project guide, verify that a newcomer can explain what the product does,
+follow every included scenario to its outcome, and find the relevant code.
+Keep the visible explanation brief; preserve evidence and deeper details in
+expandable sections. A one-scenario fixture does not establish coverage of a
+whole product.
 
 Keep private repositories, logs, credentials, and customer material out of issues
 and fixtures. Synthetic teaching examples are welcome; label them as such.
@@ -16,32 +22,47 @@ Record actual observations separately from expected answers.
 
 ## Local checks
 
-Using the skill itself requires no Node or Python installation. Maintainer checks
-use Node.js 22.20+, Python 3.10+, and the official Mermaid CLI:
+The installed HTML builder uses Node.js 18+ and only the standard library.
+Maintainer checks use Node.js 22.20+, Python 3.10+, and the official Mermaid CLI:
 
 ```sh
 npm ci
 npm run check
+npm run check:guide
 ```
 
-The check runs the example assertions, checks local Markdown links, and renders
-every Mermaid block with the official CLI. Rendered files stay in a temporary
+`check` runs the HTML builder checks, example assertions, local Markdown link
+checks, and renders every Mermaid block with the official CLI. `check:guide`
+runs only the HTML builder checks. Temporary renderings stay in a temporary
 directory. If a browser is already available, set `PUPPETEER_EXECUTABLE_PATH`;
 otherwise Puppeteer installs its development browser during `npm ci`.
 
 GitHub Actions uses the Ubuntu 24.04 runner's preinstalled Google Chrome with
 its sandbox enabled and skips Puppeteer's separate browser download.
 
-To refresh the checked-in README previews after changing their examples:
+To rebuild the public HTML example after changing its input or the builder:
+
+```sh
+npm run demo:guide
+```
+
+This uses `examples/cache-read/guide.json` to generate
+`examples/cache-read/guide.html`. Open it locally and check the narrow viewport,
+scenario navigation, expandable details, and source references. Confirm that
+it remains readable without a network connection. Only the HTML is required for
+reading; the JSON is an editable authoring input.
+
+To refresh the checked-in README screenshot and reference previews:
 
 ```sh
 npm run previews
 ```
 
-This renders the existing Mermaid with the official CLI, runs each pictured
-example, and captures its diagram, explanation, and observed output in a
-documentation layout. Inspect both PNGs in `docs/previews/` before committing.
-They are worked-example previews, not screenshots of a particular agent app.
+The primary screenshot, `docs/previews/guide.png`, must show the actual generated
+HTML. Older reference previews render existing Mermaid with the official CLI,
+run the pictured examples, and show their observed output in a documentation
+layout. Inspect the changed PNGs in `docs/previews/` before committing. Label
+teaching fixtures honestly; do not use private project content in public images.
 
 For an isolated installer smoke test using the official CLI pinned in the
 development dependencies (no installer download after `npm ci`):
@@ -56,6 +77,9 @@ not install the skill into your global agent configuration.
 ## Review expectations
 
 - Keep the installed skill self-contained under `skills/whywire/`.
+- Keep one standalone HTML file as the default saved guide. Do not introduce a
+  second main reading copy or require a hosted service, CDN, or npm install to
+  run the bundled builder.
 - Preserve the distinction between observed, source-backed, inferred, proposed,
   and unknown behavior.
 - Do not add a queue, recovery protocol, or new abstraction to every explanation.
@@ -63,7 +87,7 @@ not install the skill into your global agent configuration.
 - Prefer one focused change and explain how you checked its effect.
 - Do not claim that rendering or fixture tests prove model quality.
 
-Before publishing a release, run both checks, try a fresh conversation against a
+Before publishing a release, run all three checks, try a fresh conversation against a
 case whose expected answer is withheld, and update [validation](docs/validation.md)
 with what actually happened. Tag a version only after those checks; a local folder
 or successful install is not a published release.

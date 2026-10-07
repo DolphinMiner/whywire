@@ -9,7 +9,13 @@ repository, prefer a commit-pinned file URL. Do not use a moving `main` link
 to imply a historical version was inspected. State when a checkout is dirty.
 When a ref is unavailable, say so instead of inventing a revision.
 
-Give the reader a small evidence table beside the diagram, for example:
+Follow the active caller wiring, registrations, and relevant configuration.
+Finding a handler with a plausible name does not establish that the current UI
+uses it. Carry caller-side filters and feature conditions into the explanation.
+
+In an HTML guide, attach sources to the corresponding steps and keep longer
+evidence expandable. Do not repeat a complete reference table above the flow.
+For a requested Markdown answer, a small table can be useful, for example:
 
 | Transition | Evidence | What it establishes |
 |---|---|---|

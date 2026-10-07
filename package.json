@@ -1,8 +1,8 @@
 {
   "name": "whywire",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Understand architecture, one scenario at a time. An Agent Skill for source-backed request walkthroughs.",
+  "description": "An Agent Skill for understanding a project's user scenarios and request flows in one source-backed HTML guide.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -19,7 +19,9 @@
   "scripts": {
     "previews": "node scripts/render-previews.mjs",
     "check": "node scripts/check.mjs",
-    "check:install": "node scripts/check-install.mjs"
+    "check:install": "node scripts/check-install.mjs",
+    "check:guide": "node scripts/check-guide.mjs",
+    "demo:guide": "node skills/whywire/scripts/build-guide.mjs examples/cache-read/guide.json examples/cache-read/guide.html"
   },
   "devDependencies": {
     "@mermaid-js/mermaid-cli": "12.0.0",

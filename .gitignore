@@ -9,6 +9,7 @@ __pycache__/
 .agents/
 .claude/
 .codex/
+.impeccable/
 coverage/
 dist/
 tmp/

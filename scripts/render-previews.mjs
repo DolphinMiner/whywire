@@ -2,8 +2,9 @@ import { execFileSync } from 'node:child_process';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import puppeteer from 'puppeteer';
+import { renderGuide } from '../skills/whywire/scripts/build-guide.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = path.join(root, 'docs/previews');
@@ -20,12 +21,20 @@ const browser = await puppeteer.launch({
   ...(process.env.PUPPETEER_EXECUTABLE_PATH ? { executablePath: process.env.PUPPETEER_EXECUTABLE_PATH } : {}),
 });
 try {
+  const guide = path.join(root, 'examples/cache-read/guide.html');
+  await writeFile(guide, renderGuide(JSON.parse(await readFile(path.join(root, 'examples/cache-read/guide.json'), 'utf8'))));
+  const guidePage = await browser.newPage();
+  await guidePage.setViewport({ width: 1440, height: 1060, deviceScaleFactor: 1 });
+  await guidePage.goto(pathToFileURL(guide).href, { waitUntil: 'load' });
+  await guidePage.screenshot({ path: path.join(output, 'guide.png'), fullPage: true });
+  await guidePage.close();
+  console.log('Rendered docs/previews/guide.png from the standalone HTML.');
   const config = path.join(temporary, 'mermaid.json');
   await writeFile(config, JSON.stringify({
     theme: 'base',
     themeVariables: { fontFamily: 'Arial, sans-serif', primaryColor: '#edf4f0', primaryTextColor: '#19332c', primaryBorderColor: '#7b9b8c', lineColor: '#456158', signalColor: '#19332c', signalTextColor: '#19332c', noteBkgColor: '#fff0d6', noteBorderColor: '#dcb477', noteTextColor: '#563d1c', actorBkg: '#edf4f0', actorBorder: '#7b9b8c', actorTextColor: '#19332c' },
   }));
-  for (const example of cases) {
+  for (const example of process.argv.includes('--guide-only') ? [] : cases) {
     const directory = path.join(root, 'examples', example.name);
     const markdown = await readFile(path.join(directory, 'explanation.md'), 'utf8');
     const diagram = markdown.match(/```mermaid\n([\s\S]*?)```/)[1];

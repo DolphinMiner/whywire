@@ -1,5 +1,50 @@
 # Validation record
 
+## Standalone HTML guide update — 2026-10-07
+
+Version 0.2.0 changes the saved walkthrough to one offline HTML guide. Product
+orientation and scenario flows are visible; step explanations, code locators,
+branches, and scope details expand on demand. The small Node builder formats an
+agent-authored input; it does not analyze repositories or verify architecture.
+
+The public demo is generated from the synthetic cache fixture. The README image
+is a screenshot of that same HTML, regenerated with `npm run previews`.
+
+Local checks cover deterministic output, escaping hostile text, rejecting unsafe
+source URLs and nonportable paths, valid scenario/source metadata, complete
+no-script content, and preserving an existing output after invalid input. A
+copied-install test exposed a CLI entry-point bug when macOS resolved a temporary
+path through an alias. Comparing real paths fixed it; a symlink-path regression
+now covers that boundary. Codex and Claude Code temporary installs contain all
+eight skill files and execute the installed builder to reproduce the demo.
+The final local run passed `npm run check` (45 local references, the HTML
+checks, all three executable fixtures, and six Mermaid diagrams across four
+Markdown files), `npm run check:install`, skill metadata validation, and
+`git diff --check`.
+
+A fresh agent tested the revised skill against a private application, without
+prior walkthroughs or an expected answer. It produced five scenarios, 31 steps,
+and 61 source locators across 48 files. Every referenced path, symbol, and supplied
+line was checked. Source review then corrected two explanations: a plausible
+event endpoint was not the current caller's transport, and a caller-side filter
+disabled one search source. The evidence instructions now explicitly require
+following active wiring and caller conditions. A second reviewer spot-checked
+the corrected paths; this is not an exhaustive source audit.
+
+The actual generated guide was inspected in a browser at 1280px and 390px.
+Scenario navigation, selected state, keyboard expansion of code details, and
+horizontal overflow were checked; screenshots were saved locally. The first
+layout pass moved product orientation ahead of navigation on mobile and folded
+metadata to expose the request path sooner. Browser logs showed no warnings or
+errors during these interactions. Printing was inspected in code, not through a
+PDF export. Complete static content was checked without the script; a browser
+session with JavaScript disabled was not exercised.
+
+Private inputs, guide contents, and screenshots remain outside this repository.
+The application was not started and no provider calls or production behavior
+were tested. This is one qualitative trial, with corrections retained in the
+record; it does not establish comparative model quality or automatic triggering.
+
 ## Public release checks — 2026-10-07
 
 The public repository is [DolphinMiner/whywire](https://github.com/DolphinMiner/whywire).

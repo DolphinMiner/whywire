@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>{{TITLE}} · Whywire</title>
+<style>
+:root { --paper: #f7f4ec; --white: #fffefa; --ink: #152725; --muted: #53635d; --line: #d8ddd6; --accent: #a65119; --soft: #f4e5d4; }
+* { box-sizing: border-box; }
+html { scroll-padding-top: 2rem; }
+body { margin: 0; color: var(--ink); background: var(--paper); font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
+::selection { background: #f4a660; color: var(--ink); }
+a { color: inherit; text-underline-offset: .2em; }
+a:hover { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+button, summary { -webkit-tap-highlight-color: transparent; }
+.skip { position: fixed; left: 1rem; top: -5rem; z-index: 2; padding: .7rem 1rem; background: var(--white); }
+.skip:focus { top: 1rem; }
+.topbar { padding: 1rem max(1.5rem, calc((100vw - 1240px) / 2)); display: flex; gap: 1rem; justify-content: space-between; align-items: center; color: var(--paper); background: var(--ink); }
+.brand { font-size: 1.15rem; font-weight: 750; letter-spacing: -.03em; }
+.tagline { color: #d2ddd7; font-size: .85rem; margin-left: 1rem; }
+.print { color: var(--paper); border: 1px solid #73857c; background: transparent; border-radius: 5px; padding: .35rem .7rem; font: inherit; font-size: .8rem; cursor: pointer; }
+.print:hover { background: #2e4540; }
+.layout { max-width: 1290px; margin: auto; padding: 2.5rem 1.5rem 4rem; display: grid; grid-template-columns: 235px minmax(0, 1fr); grid-template-areas: "sidebar overview" "sidebar content"; gap: 1.5rem 3rem; }
+.sidebar { grid-area: sidebar; position: sticky; align-self: start; top: 2rem; }
+.sidebar h2 { margin: 0 0 1rem; font-size: .9rem; }
+.sidebar ol { padding: 0; margin: 0; list-style: none; }
+.sidebar a { display: block; padding: .7rem .8rem; border-radius: 5px; margin: .2rem 0; text-decoration: none; font-size: .95rem; }
+.sidebar a:hover { background: #eaece4; }
+.sidebar a[aria-current] { background: var(--ink); color: var(--paper); }
+main { grid-area: content; min-width: 0; }
+h1, h2, h3, h4, p { margin-top: 0; }
+h1, h2, h3 { text-wrap: balance; }
+h1 { font-size: clamp(1.9rem, 3.1vw, 2.65rem); line-height: 1.2; letter-spacing: -.035em; max-width: 23ch; margin-bottom: 1rem; }
+.intro { font-size: 1.15rem; max-width: 65ch; margin-bottom: 1rem; }
+.overview { grid-area: overview; min-width: 0; }
+.about > summary { cursor: pointer; color: var(--muted); font-size: .85rem; }
+.orientation { margin: 1rem 0 0; display: grid; grid-template-columns: 1fr 1.5fr; gap: 1rem 1.5rem; }
+dt { color: var(--muted); font-size: .8rem; margin-bottom: .25rem; }
+dd { margin: 0; }
+.orientation dd { font-size: .92rem; max-width: 65ch; }
+.orientation .revision { grid-column: 1 / -1; overflow-wrap: anywhere; }
+.scenario { background: var(--white); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 1rem; scroll-margin-top: 1rem; }
+.scenario > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: start; gap: 1rem; padding: 1.35rem 1.5rem; }
+.scenario > summary::-webkit-details-marker { display: none; }
+.scenario > summary::after { content: "+"; font-size: 1.5rem; line-height: 1.3; color: var(--muted); }
+.scenario[open] > summary::after { content: "−"; }
+.scenario > summary > span:first-child { flex: 1; }
+.scenario h2 { display: inline; font-size: 1.3rem; letter-spacing: -.02em; line-height: 1.35; }
+.scenario-summary { display: block; color: var(--muted); font-size: .9rem; margin-top: .35rem; max-width: 65ch; }
+.step-count { white-space: nowrap; font-size: .78rem; color: var(--muted); padding-top: .2rem; }
+.scenario-body { padding: 0 1.5rem 1.5rem; }
+.scenario-outcome { font-size: .87rem; border-top: 1px solid var(--line); padding-top: .8rem; margin-bottom: 0; }
+.scenario-outcome strong { font-size: .8rem; color: var(--muted); font-weight: 500; margin-right: .4rem; }
+.scenario-context { margin: 0; padding: 1rem 0; display: grid; grid-template-columns: 1fr 1.5fr; gap: 1.3rem; border-bottom: 1px solid var(--line); }
+.scenario-context dd { font-size: .87rem; }
+.flow-heading { margin: 1.5rem 0 1rem; }
+.flow-heading h3 { font-size: 1rem; margin-bottom: .2rem; }
+.flow-heading p { font-size: .8rem; color: var(--muted); margin: 0; }
+.flow-map { display: grid; grid-template-columns: repeat(var(--steps), minmax(0, 1fr)); gap: 1.15rem; list-style: none; padding: 0; margin: 1.2rem 0 1.5rem; }
+.flow-map li { min-width: 0; position: relative; padding: .8rem .7rem; background: var(--paper); border: 1px solid var(--line); border-radius: 5px; }
+.flow-map li:not(:last-child)::after { content: ""; position: absolute; width: .8rem; height: 1px; background: var(--accent); top: 25px; right: -.95rem; }
+.flow-map li:not(:last-child)::before { content: ""; position: absolute; height: 5px; width: 5px; border-right: 1px solid var(--accent); border-top: 1px solid var(--accent); transform: rotate(45deg); top: 23px; right: -.95rem; }
+.flow-map strong { display: block; margin: .7rem 0 .35rem; font-size: .85rem; line-height: 1.4; overflow-wrap: anywhere; }
+.flow-map li > span:last-child { display: block; font-size: .73rem; color: var(--muted); overflow-wrap: anywhere; }
+.map-number { color: var(--accent); font-size: .77rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.flow-map-long { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+.flow-map-long li { padding: .7rem 1rem .7rem 3rem; }
+.flow-map-long .map-number { position: absolute; left: 1rem; top: .8rem; }
+.flow-map-long strong { margin: 0 0 .15rem; }
+.flow-map-long li:not(:last-child)::after { width: 1px; height: .8rem; top: auto; bottom: -.95rem; left: 1.2rem; }
+.flow-map-long li:not(:last-child)::before { transform: rotate(135deg); top: auto; bottom: -.95rem; left: calc(1.2rem - 2px); }
+.flow { margin: 0; padding: 0; list-style: none; }
+.step-details .flow { margin-top: 1.2rem; }
+.flow-step { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 1rem; position: relative; padding-bottom: 1.35rem; }
+.flow-step:not(:last-child)::before { content: ""; position: absolute; left: 14px; top: 30px; bottom: 0; width: 1px; background: #bc895e; }
+.flow-step:not(:first-child)::after { content: ""; position: absolute; left: 11px; top: -7px; width: 6px; height: 6px; border-right: 1px solid #bc895e; border-bottom: 1px solid #bc895e; transform: rotate(45deg); }
+.step-number { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #bc895e; background: var(--soft); color: #763809; display: grid; place-items: center; font-size: .78rem; font-variant-numeric: tabular-nums; }
+.flow-step h4 { font-size: .98rem; margin: .08rem 0 .25rem; line-height: 1.5; }
+.component { font-weight: 400; color: var(--muted); font-size: .78rem; margin-left: .5rem; overflow-wrap: anywhere; }
+.flow-step p { font-size: .9rem; margin: 0 0 .4rem; max-width: 70ch; }
+.sources { display: flex; flex-wrap: wrap; gap: .3rem 1rem; }
+.source { display: inline-flex; flex-wrap: wrap; gap: .2rem .6rem; align-items: baseline; color: var(--muted); font-size: .74rem; max-width: 100%; }
+code { font: .9em/1.5 ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; overflow-wrap: anywhere; }
+.symbol { color: var(--accent); overflow-wrap: anywhere; }
+.supplement { border-top: 1px solid var(--line); padding: .8rem 0; }
+.supplement:last-child { padding-bottom: 0; }
+.supplement > summary, .omitted > summary { cursor: pointer; font-size: .85rem; font-weight: 600; }
+.supplement p, .omitted li { font-size: .85rem; }
+.supplement p { margin: .8rem 0; color: var(--muted); }
+.branch-list { margin: .8rem 0 0; font-size: .85rem; }
+.branch-list dt { color: var(--ink); font-size: .85rem; font-weight: 600; }
+.branch-list dd { margin-bottom: .8rem; max-width: 70ch; }
+pre { overflow: auto; padding: 1rem; background: var(--paper); border-radius: 5px; white-space: pre; font-size: .83rem; }
+pre code { overflow-wrap: normal; }
+.omitted { margin: 1.5rem 0; }
+.omitted ul { padding-left: 1.4rem; }
+footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem; color: var(--muted); font-size: .78rem; max-width: 80ch; }
+@media (max-width: 800px) {
+  .layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "overview" "sidebar" "content"; gap: 1.5rem; padding-top: 1.5rem; }
+  .sidebar { position: static; }
+  .sidebar ol { display: flex; flex-wrap: wrap; gap: .3rem; }
+  .sidebar a { border: 1px solid var(--line); margin: 0; font-size: .85rem; }
+  .sidebar h2 { margin-bottom: .7rem; }
+}
+@media (max-width: 520px) {
+  .layout { padding: 1.2rem 1rem 2rem; }
+  .topbar { padding: .8rem 1rem; }
+  .tagline { display: none; }
+  .orientation, .scenario-context { grid-template-columns: 1fr; gap: .8rem; }
+  .intro { font-size: 1.05rem; }
+  .scenario > summary { padding: 1rem; gap: .6rem; }
+  .scenario-body { padding: 0 1rem 1rem; }
+  .step-count { display: none; }
+  .scenario h2 { font-size: 1.15rem; }
+  .flow-step { gap: .7rem; }
+  .component { display: block; margin-left: 0; }
+  .flow-map { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .flow-map li { padding: .7rem 1rem .7rem 3rem; }
+  .flow-map .map-number { position: absolute; left: 1rem; top: .8rem; }
+  .flow-map strong { margin: 0 0 .15rem; }
+  .flow-map li:not(:last-child)::after { width: 1px; height: .8rem; top: auto; bottom: -.95rem; left: 1.2rem; }
+  .flow-map li:not(:last-child)::before { transform: rotate(135deg); top: auto; bottom: -.95rem; left: calc(1.2rem - 2px); }
+}
+@media print {
+  body { background: white; font-size: 11pt; }
+  .topbar { color: var(--ink); background: white; padding: 0 0 1rem; border-bottom: 1px solid var(--line); }
+  .tagline { color: var(--muted); }
+  .sidebar, .print, .skip, .scenario > summary::after { display: none !important; }
+  .layout { display: block; padding: 1.5rem 0; max-width: none; }
+  .overview { margin-bottom: 1.5rem; }
+  .scenario { break-inside: auto; }
+  .flow-step, .scenario-context { break-inside: avoid; }
+  .scenario > summary { break-after: avoid; }
+  details::details-content { content-visibility: visible !important; }
+  details > :not(summary) { display: block !important; }
+  .scenario-context { display: grid !important; }
+  a { text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#scenarios">{{LABEL_SKIP}}</a>
+<header class="topbar"><div><span class="brand">Whywire</span><span class="tagline">{{LABEL_GUIDE}}</span></div><button class="print" type="button" hidden>{{LABEL_PRINT}}</button></header>
+<div class="layout">
+<header class="overview"><h1>{{TITLE}}</h1><p class="intro">{{SUMMARY}}</p><details class="about"><summary>{{LABEL_ABOUT}}</summary><dl class="orientation"><div><dt>{{LABEL_AUDIENCE}}</dt><dd>{{AUDIENCE}}</dd></div><div><dt>{{LABEL_SCOPE}}</dt><dd>{{SCOPE}}</dd></div><div class="revision"><dt>{{LABEL_REVISION}}</dt><dd>{{REVISION}}</dd></div></dl></details></header>
+<aside class="sidebar"><nav aria-label="{{LABEL_SCENARIOS}}"><h2>{{LABEL_SCENARIOS}}</h2><ol>{{NAV}}</ol></nav></aside>
+<main>
+<section id="scenarios" aria-label="{{LABEL_SCENARIOS}}">{{SCENARIOS}}</section>
+{{OMITTED}}
+<footer>{{LABEL_FOOTER}}</footer>
+</main>
+</div>
+<script>
+const scenarios = [...document.querySelectorAll('.scenario')];
+const links = [...document.querySelectorAll('nav a')];
+function selectScenario(id) {
+  if (typeof id !== 'string') {
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch { return; }
+  }
+  const selected = scenarios.find(scenario => scenario.id === id);
+  if (!selected) return;
+  for (const scenario of scenarios) scenario.open = scenario === selected;
+  for (const link of links) {
+    if (link.hash === '#' + selected.id) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
+  }
+}
+for (const link of links) link.addEventListener('click', () => selectScenario(link.hash.slice(1)));
+window.addEventListener('hashchange', selectScenario);
+selectScenario();
+const printButton = document.querySelector('.print');
+printButton.hidden = false;
+printButton.addEventListener('click', () => window.print());
+let beforePrint = [];
+window.addEventListener('beforeprint', () => {
+  beforePrint = [...document.querySelectorAll('details')].map(detail => [detail, detail.open]);
+  for (const [detail] of beforePrint) detail.open = true;
+});
+window.addEventListener('afterprint', () => { for (const [detail, open] of beforePrint) detail.open = open; });
+</script>
+</body>
+</html>

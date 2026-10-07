@@ -60,6 +60,12 @@ for (const filename of files.filter(file => file.endsWith('.md'))) {
 assert.equal(await readFile(path.join(root, 'LICENSE'), 'utf8'), await readFile(path.join(skillRoot, 'LICENSE'), 'utf8'));
 console.log(`PASS: ${links} local file/line links and the installed license.`);
 
+execFileSync(process.execPath, [path.join(root, 'scripts/check-guide.mjs')], {
+  cwd: root,
+  stdio: 'inherit',
+  timeout: 30_000,
+});
+
 for (const filename of files.filter(file => path.basename(file) === 'app.py' && within(path.join(root, 'examples'), file))) {
   execFileSync('python3', [filename, '--check'], {
     cwd: path.dirname(filename),

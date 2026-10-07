@@ -70,7 +70,16 @@ try {
     for (const [path, content] of expected) {
       assert(content.equals(installed.get(path)), `${agent}: installed bytes differ: ${path}`);
     }
+    const output = join(cwd, 'whywire.html');
+    const build = spawnSync(process.execPath, [
+      join(cwd, folder, 'skills', 'whywire', 'scripts', 'build-guide.mjs'),
+      join(projectRoot, 'examples', 'cache-read', 'guide.json'), output,
+    ], { cwd, env: environment, encoding: 'utf8', timeout: 30_000 });
+    assert.equal(build.status, 0, `${agent}: copied builder failed: ${build.stderr ?? build.error}`);
+    assert(readFileSync(output).equals(readFileSync(join(projectRoot, 'examples', 'cache-read', 'guide.html'))),
+      `${agent}: copied builder output differs from the public demo`);
     console.log(`${agent}: ${installed.size} files copied byte-for-byte; no symbolic links`);
+    console.log(`${agent}: installed builder produced the complete standalone demo`);
   }
 } catch (error) {
   console.error(error.message);

@@ -1,4 +1,4 @@
 interface:
   display_name: "Whywire"
-  short_description: "Understand architecture through one request flow"
-  default_prompt: "Use $whywire to walk through this scenario from its entry point to its result, showing module responsibilities, data flow, and source references."
+  short_description: "Explore a project's scenarios in one HTML guide"
+  default_prompt: "Use $whywire to explain this project's purpose and main user scenarios in one concise HTML guide, tracing each included request flow and linking its steps to source code."

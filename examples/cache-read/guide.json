@@ -1,0 +1,90 @@
+{
+  "lang": "en",
+  "title": "Read an item. Follow its path.",
+  "summary": "A caller asks for an item. This tiny cache-aside example returns its value, using a local cache to avoid reading the origin again.",
+  "audience": "A developer meeting this code for the first time.",
+  "revision": "Cache-read teaching fixture · app.py in this repository",
+  "scope": "Two sequential reads of one unchanged item. Synthetic Python objects: no server, network, or database.",
+  "scenarios": [
+    {
+      "id": "first-read",
+      "title": "Read an item for the first time",
+      "summary": "The empty cache sends this read to the origin; the result is saved for next time.",
+      "actor": "A caller requesting item-1",
+      "trigger": "demo() calls read_item with an empty cache.",
+      "outcome": "The caller gets blue mug; the cache now holds the same value.",
+      "steps": [
+        {
+          "title": "Ask for item-1",
+          "component": "Caller · demo",
+          "detail": "Create a cache and an origin, then pass both to the read function.",
+          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "demo", "line": 28 }]
+        },
+        {
+          "title": "Look in the cache",
+          "component": "read_item",
+          "detail": "The key is absent, so this request continues past the early-return branch.",
+          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "read_item", "line": 17 }]
+        },
+        {
+          "title": "Read the original value",
+          "component": "Origin.read",
+          "detail": "The origin returns blue mug and increments its read counter.",
+          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "Origin.read", "line": 11 }, { "file": "examples/cache-read/app.py", "symbol": "read_item", "line": 21 }]
+        },
+        {
+          "title": "Keep a copy for the next read",
+          "component": "Cache dict",
+          "detail": "read_item stores the returned value under item-1 before responding.",
+          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "read_item", "line": 23 }]
+        },
+        {
+          "title": "Return blue mug",
+          "component": "read_item → caller",
+          "detail": "The function returns the value directly; no later delivery step is involved.",
+          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "read_item", "line": 25 }]
+        }
+      ],
+      "branches": [
+        { "condition": "If the key is already cached", "path": "read_item returns at line 19. It skips both the origin read and the cache write; see the second scenario." },
+        { "condition": "Ordering in this example", "path": "All calls are synchronous. Origin owns the original value; the cache stores a derived copy." }
+      ],
+      "mermaid": "sequenceDiagram\n    participant C as Caller\n    participant S as read_item\n    participant K as Cache dict\n    participant O as Origin object\n    C->>S: read item-1\n    S->>K: look up item-1\n    K-->>S: absent\n    S->>O: read item-1\n    O-->>S: blue mug\n    S->>K: store item-1 = blue mug\n    S-->>C: blue mug"
+    },
+    {
+      "id": "repeat-read",
+      "title": "Read the same item again",
+      "summary": "The stored copy answers this request; the origin is not called a second time.",
+      "actor": "The same caller requesting item-1",
+      "trigger": "demo() makes a second call with the same cache and origin.",
+      "outcome": "The caller gets blue mug again; the origin read count stays at one.",
+      "steps": [
+        {
+          "title": "Request item-1 again",
+          "component": "Caller · demo",
+          "detail": "The second call reuses the objects from the first call, including its cached value.",
+          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "demo", "line": 32 }]
+        },
+        {
+          "title": "Find the stored value",
+          "component": "read_item",
+          "detail": "The key is present, so the function takes the cache-hit branch.",
+          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "read_item", "line": 17 }]
+        },
+        {
+          "title": "Return directly from the cache",
+          "component": "Cache dict → caller",
+          "detail": "The early return avoids the origin call below it. check() asserts equal responses and one origin read.",
+          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "read_item", "line": 19 }, { "file": "examples/cache-read/app.py", "symbol": "check", "line": 37 }]
+        }
+      ],
+      "branches": [
+        { "condition": "If the origin changes", "path": "An existing cache entry is not refreshed. This fixture contains no invalidation or expiry policy." }
+      ]
+    }
+  ],
+  "omitted": [
+    "Missing keys, origin failures, concurrent requests, process restarts, and distributed consistency.",
+    "The example makes no production freshness or latency claim. Its runnable check covers equal responses and the origin read count."
+  ]
+}
