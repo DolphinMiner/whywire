@@ -1,5 +1,26 @@
 # Validation record
 
+## Public release checks — 2026-10-07
+
+The public repository is [DolphinMiner/whywire](https://github.com/DolphinMiner/whywire).
+The official `skills` CLI 1.7.0 discovered exactly one skill from that GitHub
+source. Copied installations for Codex and Claude Code each contained all five
+canonical files, byte-for-byte, with no symlinks. These checks used temporary
+projects and state/cache directories, with Git credential helpers disabled and
+GitHub token environment variables removed. Temporary output was removed.
+
+[GitHub Actions passed](https://github.com/DolphinMiner/whywire/actions/runs/37640502979)
+on Ubuntu 24.04 with Node.js 22 and Python 3.13: dependency installation,
+`npm run check`, and `npm run check:install`. The first cloud run failed because
+Puppeteer's downloaded browser lacked a usable sandbox under the runner's
+AppArmor restrictions. The workflow now uses the runner's preinstalled Google
+Chrome with its sandbox enabled and skips the extra browser download.
+
+The public README, cover, two example previews, installation commands, and
+repository topics were checked on GitHub. This establishes public distribution
+and the Linux maintainer checks; native host triggering and model quality
+remain separate questions.
+
 ## Scenario walkthrough update — 2026-10-07
 
 Architecture and onboarding now default to a normal scenario walkthrough. Both
@@ -79,9 +100,8 @@ are development artifacts and are not part of the installed skill.
 
 - Native automatic triggering and discovery in a fresh Codex or Claude Code
   application session. Reading a skill in an agent trial is a different check.
-- Execution of the GitHub Actions workflow on GitHub, including its Linux
-  browser environment. The workflow is supplied; local checks are the evidence.
-- Other operating systems, agents, models, or real multi-repository systems.
+- Operating systems beyond the macOS checks and Ubuntu CI described above,
+  additional agents or models, or real multi-repository systems.
 - Better answer quality or fewer errors than a strong prompt without this skill.
 - Safety or correctness of a proposed production fix. The examples explain
   bounded behaviors; they do not deploy a recovery protocol.
