@@ -138,9 +138,12 @@ Containers and separators use 1px borders.
 - **Overview:** a product introduction followed by capabilities and technology
   roles. Features may link to their relevant scenario. Keep source evidence
   attached to stack claims, and label unexamined content honestly.
-- **Code structure:** a short orientation followed by major package paths,
-  responsibilities, and source entry points. This is a reading map, not a file
-  browser or a recursive directory dump.
+- **Code structure:** a short orientation followed by a familiar directory tree
+  and detailed package responsibilities with source entry points. Derive the tree
+  from the same package paths, group shared parents, and place each package's
+  concise function label beside its path. Use monospace paths and branch marks
+  with readable, wrapping annotations. State that the tree covers inspected
+  paths; do not imply it is a complete file inventory or invent parent roles.
 - **Scenario disclosure:** a native `details` section with a title, short summary,
   step count, and plus/minus indicator. The first scenario starts open within
   its page. Its body states the outcome and leads directly into the diagram;

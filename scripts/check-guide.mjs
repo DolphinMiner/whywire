@@ -75,6 +75,18 @@ const sectionsHtml = renderGuide(hostileSections);
 assert(!sectionsHtml.includes(injected) && sectionsHtml.includes('&lt;img src=x onerror=&quot;alert(3)&quot;&gt;'), 'Every new prose field must be escaped');
 assert(sectionsHtml.includes('src/&lt;img onerror=&quot;alert(5)&quot;&gt;'), 'Package paths must be escaped as text');
 assert.equal((sectionsHtml.match(/<script\b/g) || []).length, scripts.length, 'New sections must not create executable markup');
+const treeInput = structuredClone(complete);
+treeInput.packages = [
+  ['apps/web', 'Product UI'], ['packages/core', 'Shared logic'],
+  ['apps/api', 'API service'], ['apps', 'Applications'],
+  ['constructor/__proto__', 'Literal directory names'],
+].map(([path, name]) => ({ path, name, responsibility: name, sources: evidence }));
+const tree = renderGuide(treeInput).match(/<ul class="directory-tree">([\s\S]*?)<\/ul>/)[1];
+assert.equal((tree.match(/title="apps"/g) || []).length, 1, 'Shared ancestors appear once even when input paths are interleaved');
+assert(tree.includes('title="apps/web"') && tree.includes('title="apps/api"') && tree.includes('│   ├── ') && tree.includes('└── '), 'Tree preserves nesting and branch connectors');
+assert(tree.includes('Product UI') && tree.includes('API service') && tree.includes('Applications') && tree.includes('Literal directory names'), 'Roles come from the corresponding package entries, including explicit parents');
+treeInput.packages.push({ ...treeInput.packages[0], path: 'apps/web/' });
+assert.throws(() => renderGuide(treeInput), /unique paths/, 'Duplicate paths cannot silently lose a function label');
 for (const mutate of [
   value => { value.features = {}; },
   value => { value.features[0].scenario = 'not-a-real-scenario'; },

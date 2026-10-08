@@ -46,6 +46,12 @@ button, summary { -webkit-tap-highlight-color: transparent; }
 .stack-row dd > p, .package-row p { margin: 0 0 .5rem; font-size: .92rem; max-width: 65ch; }
 .field-label { display: block; color: var(--muted); font-size: .75rem; font-weight: 400; margin-bottom: .4rem; }
 .package-path { color: var(--muted); font-size: .8rem; }
+.tree-scope { font-size: .85rem; color: var(--muted); margin-bottom: 1rem; }
+.directory-tree { list-style: none; margin: 0; padding: 1.25rem 1.5rem; border: 1px solid var(--line); border-radius: 5px; background: var(--white); }
+.tree-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5rem; padding: .3rem 0; break-inside: avoid; }
+.tree-name { white-space: pre-wrap; font-size: .85rem; }
+.tree-name > span { color: var(--muted); }
+.tree-role { font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
 .inline-sources > summary { font-size: .78rem; color: var(--muted); cursor: pointer; }
 .inline-sources .sources { margin-top: .75rem; }
 .uncovered { color: var(--muted); font-size: .9rem; }
@@ -155,6 +161,9 @@ footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem;
   .stack-row, .package-row, .branch-row { gap: .7rem; }
   .page-heading { margin-bottom: 1.5rem; }
   .scenario-nav { flex-direction: column; }
+  .directory-tree { padding: 1rem; }
+  .tree-row { grid-template-columns: minmax(0, 1fr); gap: .1rem; }
+  .tree-role { padding-left: var(--tree-indent); font-size: .8rem; }
 
 }
 @media print {
@@ -190,7 +199,7 @@ footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem;
 <section class="page-section"><h2>{{LABEL_FEATURES}}</h2>{{FEATURES}}</section>
 <section class="page-section"><h2>{{LABEL_STACK}}</h2>{{STACK}}</section>
 <details class="about"><summary>{{LABEL_ABOUT}}</summary><dl class="orientation"><div><dt>{{LABEL_AUDIENCE}}</dt><dd>{{AUDIENCE}}</dd></div><div><dt>{{LABEL_SCOPE}}</dt><dd>{{SCOPE}}</dd></div><div class="revision"><dt>{{LABEL_REVISION}}</dt><dd>{{REVISION}}</dd></div></dl></details>{{OMITTED}}</section>
-<section class="guide-page" id="structure" aria-labelledby="structure-title"><header class="page-heading"><h1 id="structure-title" tabindex="-1">{{LABEL_STRUCTURE}}</h1>{{STRUCTURE_SUMMARY}}</header><section class="page-section"><h2>{{LABEL_PACKAGES}}</h2>{{PACKAGES}}</section></section>
+<section class="guide-page" id="structure" aria-labelledby="structure-title"><header class="page-heading"><h1 id="structure-title" tabindex="-1">{{LABEL_STRUCTURE}}</h1>{{STRUCTURE_SUMMARY}}</header>{{DIRECTORY_TREE}}<section class="page-section"><h2>{{LABEL_PACKAGES}}</h2>{{PACKAGES}}</section></section>
 <section class="guide-page" id="scenarios" aria-labelledby="scenarios-title"><header class="page-heading"><h1 id="scenarios-title" tabindex="-1">{{LABEL_SCENARIOPAGE}}</h1></header>{{SCENARIOS}}</section>
 <footer>{{LABEL_FOOTER}}<details class="renderer-license"><summary>{{LABEL_LICENSES}}</summary><pre>{{MERMAID_LICENSE}}</pre></details></footer>
 </main>

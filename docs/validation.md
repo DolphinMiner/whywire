@@ -1,5 +1,19 @@
 # Validation record
 
+## Annotated directory tree — 2026-10-08
+
+Code structure now includes a directory tree above the existing package details.
+It derives paths and short function labels from the same `packages` entries;
+shared ancestors are grouped, explicit parent labels are retained, and duplicate
+paths fail visibly. It lists inspected paths rather than claiming a complete
+filesystem inventory. No additional schema or dependency is needed.
+
+The builder check covers interleaved paths, parent labels, branch connectors,
+escaping and duplicate normalized paths. The actual private guide shows 21
+package labels in 23 tree rows. Desktop and 390px screenshots were inspected;
+mobile annotations move below the corresponding path and no page overflow was
+observed. The public structure-page preview was regenerated from its HTML.
+
 ## Three-page guide and readable evidence — 2026-10-08
 
 Version 0.4.0 keeps one offline HTML and adds three hash-navigable reading pages:

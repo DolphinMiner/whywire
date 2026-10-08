@@ -19,6 +19,7 @@ const labels = {
   en: {
     overview: 'Product overview', structure: 'Code structure', scenarioPage: 'Request scenarios', contents: 'In this guide',
     features: 'What you can do', stack: 'Languages & infrastructure', packages: 'Packages & responsibilities',
+    tree: 'Directory map', treeScope: 'Inspected paths, with each package’s role alongside. Not a complete file listing.',
     uncovered: 'Not covered in this guide. Inspect the project source before adding this section.',
     reading: 'Where to read next', sources: 'Code entry points', condition: 'When', handling: 'What happens', viewScenario: 'Follow this request',
     guide: 'A guide through the code', scenarios: 'Choose a scenario', audience: 'Who this is for',
@@ -32,6 +33,7 @@ const labels = {
   'zh-CN': {
     overview: '产品概览', structure: '代码结构', scenarioPage: '场景请求流', contents: '阅读目录',
     features: '可以用它做什么', stack: '编程语言与基础设施', packages: '项目包与职责',
+    tree: '目录结构', treeScope: '展示本次梳理的目录与文件，并标注各包功能；未列出全部文件。',
     uncovered: '本次导读尚未梳理这一部分，需要核对项目源码后补充。',
     reading: '从哪里继续读代码', sources: '代码入口', condition: '什么情况下', handling: '如何处理', viewScenario: '跟随这次请求',
     guide: '沿着请求读懂代码', scenarios: '选择使用场景', audience: '适合谁阅读',
@@ -73,6 +75,30 @@ function optionalList(value, label) {
   if (value === undefined) return [];
   if (!Array.isArray(value)) throw new Error(`${label} must be an array`);
   return value;
+}
+
+function directoryTreeMarkup(packages) {
+  const root = new Map();
+  for (const item of packages) {
+    const parts = item.path.replace(/\/$/, '').split('/');
+    let siblings = root;
+    for (const [index, part] of parts.entries()) {
+      if (!siblings.has(part)) siblings.set(part, { children: new Map() });
+      const node = siblings.get(part);
+      if (index === parts.length - 1) {
+        if (node.role !== undefined) throw new Error('packages must have unique paths');
+        node.role = item.name;
+      }
+      siblings = node.children;
+    }
+  }
+  const rows = (siblings, prefix = '', parent = '') => [...siblings].map(([name, node], index) => {
+    const last = index === siblings.size - 1;
+    const path = parent + name;
+    const branch = prefix + (last ? '└── ' : '├── ');
+    return `<li class="tree-row" style="--tree-indent:${branch.length}ch"><code class="tree-name" title="${escape(path)}"><span aria-hidden="true">${branch}</span>${escape(name)}${node.children.size ? '/' : ''}</code>${node.role === undefined ? '' : `<span class="tree-role">${escape(node.role)}</span>`}</li>${rows(node.children, prefix + (last ? '    ' : '│   '), path + '/')}`;
+  }).join('');
+  return `<ul class="directory-tree">${rows(root)}</ul>`;
 }
 
 export function renderGuide(input) {
@@ -132,7 +158,8 @@ export function renderGuide(input) {
     if (!item || typeof item !== 'object') throw new Error(`${label} must be an object`);
     return `<div class="stack-row"><dt><span class="field-label">${escape(text(item.category, `${label}.category`))}</span>${escape(text(item.name, `${label}.name`))}</dt><dd><p>${escape(text(item.purpose, `${label}.purpose`))}</p><details class="inline-sources"><summary>${t.sources}</summary>${sourcesMarkup(item.sources, `${label}.sources`)}</details></dd></div>`;
   }).join('');
-  const packages = optionalList(input.packages, 'packages').map((item, i) => {
+  const packageItems = optionalList(input.packages, 'packages');
+  const packages = packageItems.map((item, i) => {
     const label = `packages[${i}]`;
     if (!item || typeof item !== 'object') throw new Error(`${label} must be an object`);
     return `<li class="package-row"><div><h3>${escape(text(item.name, `${label}.name`))}</h3><code class="package-path">${escape(portablePath(item.path, `${label}.path`, true))}</code></div><div><p>${escape(text(item.responsibility, `${label}.responsibility`))}</p><details class="inline-sources"><summary>${t.sources}</summary>${sourcesMarkup(item.sources, `${label}.sources`)}</details></div></li>`;
@@ -150,6 +177,7 @@ export function renderGuide(input) {
     FEATURES: features ? `<ul class="feature-list">${features}</ul>` : uncovered,
     STACK: stack ? `<dl class="stack-list">${stack}</dl>` : uncovered,
     PACKAGES: packages ? `<ul class="package-list">${packages}</ul>` : uncovered,
+    DIRECTORY_TREE: packages ? `<section class="page-section"><h2>${t.tree}</h2><p class="tree-scope">${t.treeScope}</p>${directoryTreeMarkup(packageItems)}</section>` : '',
     STRUCTURE_SUMMARY: input.structureSummary === undefined ? '' : `<p class="intro">${escape(text(input.structureSummary, 'structureSummary'))}</p>`,
     MERMAID_RUNTIME: renderer.replace(/<\/script/gi, '<\\/script'), MERMAID_LICENSE: escape(rendererLicense),
     NAV: scenarios.map(scenario => `<li><a data-route href="#scenario-${escape(scenario.id)}">${escape(scenario.title)}</a></li>`).join('\n'),

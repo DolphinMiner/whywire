@@ -7,7 +7,7 @@ reading entry point, with three hash-navigable pages:
 | Page | Contents |
 | --- | --- |
 | `#overview` (default) | Product purpose, capabilities, verified languages and technology roles. |
-| `#structure` | Major package responsibilities and source entry points. |
+| `#structure` | Annotated directory tree, major package responsibilities, and source entry points. |
 | `#scenarios` | Scenario choices and source-backed Mermaid request flows. |
 
 `#scenario-<id>` opens a particular scenario on the Scenarios page. Browser
@@ -87,6 +87,11 @@ scenario ID, such as `read-item`, not a URL or hash. Each stack entry needs
 `category`, `name`, `purpose`, and nonempty `sources`. Each package needs `path`,
 `name`, `responsibility`, and nonempty `sources`. Package paths are
 repository-relative locations, not invented component labels.
+
+The builder derives the directory tree from these same `packages` entries:
+`path` supplies the hierarchy and `name` supplies the short function label beside
+each package. Shared parent directories group the paths without an inferred
+description. Do not author a second tree or imply this is the full file inventory.
 
 Each scenario needs the fields shown through `steps`, including nonempty
 `mermaid`; `branches` and `reading` are optional. A branch has `condition` and

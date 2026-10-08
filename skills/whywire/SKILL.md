@@ -32,9 +32,12 @@ not prove how the product uses it or where it is deployed.
 
 Code structure explains the major applications, services, shared libraries,
 contracts, and tooling directories. Give each included package a concise
-responsibility and inspected source entry points. Show how the main boundaries
-fit together, not a recursive file inventory. State uncovered packages or
-uncertain technology usage instead of guessing.
+responsibility and inspected source entry points. The Code structure page first
+shows a directory tree derived from the same package paths, with each package's
+concise name beside it as a function label; detailed responsibilities follow.
+Group shared parent directories without inventing roles for them. This tree
+covers inspected package paths, not every repository file. State uncovered
+packages or uncertain technology usage instead of guessing.
 
 For a whole-project request, show the principal scenarios before following any
 single one. Usually 3–5 explain a useful first slice; use the number the product
