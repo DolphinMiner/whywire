@@ -13,8 +13,10 @@ with the smallest shareable source that makes the answer checkable.
 For a project guide, verify that a newcomer can explain what the product does,
 follow every included scenario to its outcome, and find the relevant code.
 Keep the visible explanation brief; preserve evidence and deeper details in
-expandable sections. A one-scenario fixture does not establish coverage of a
-whole product.
+expandable sections. Author a Mermaid diagram for each scenario from inspected
+source; request flows should show participants, calls, returns, and relevant
+conditions or async handoffs. Do not turn `steps` into a substitute diagram.
+A one-scenario fixture does not establish coverage of a whole product.
 
 Keep private repositories, logs, credentials, and customer material out of issues
 and fixtures. Synthetic teaching examples are welcome; label them as such.
@@ -22,7 +24,10 @@ Record actual observations separately from expected answers.
 
 ## Local checks
 
-The installed HTML builder uses Node.js 18+ and only the standard library.
+The installed HTML builder uses Node.js 18+ and only the standard library. It
+embeds `assets/mermaid.min.js` (Mermaid 12.1.0) in every generated HTML, once per
+file. Preserve the upstream bundle and `assets/mermaid-LICENSE.txt` together;
+readers do not install packages or fetch a CDN runtime.
 Maintainer checks use Node.js 22.20+, Python 3.10+, and the official Mermaid CLI:
 
 ```sh
@@ -49,8 +54,11 @@ npm run demo:guide
 This uses `examples/cache-read/guide.json` to generate
 `examples/cache-read/guide.html`. Open it locally and check the narrow viewport,
 scenario navigation, expandable details, and source references. Confirm that
-it remains readable without a network connection. Only the HTML is required for
-reading; the JSON is an editable authoring input.
+both sequence diagrams render offline, their calls and returns remain legible,
+and Fit to width / Actual size works without page overflow at a narrow viewport.
+Check that a render failure displays an error and opens its source. With JavaScript
+disabled, text, references, and native disclosures must remain readable.
+Only the HTML is required for reading; the JSON is an editable authoring input.
 
 To refresh the checked-in README screenshot and reference previews:
 
@@ -80,6 +88,9 @@ not install the skill into your global agent configuration.
 - Keep one standalone HTML file as the default saved guide. Do not introduce a
   second main reading copy or require a hosted service, CDN, or npm install to
   run the bundled builder.
+- Keep Mermaid configuration in the template with strict security settings;
+  reject input directives and frontmatter. Require nonempty authored `mermaid`
+  for each scenario and retain the source in the generated HTML.
 - Preserve the distinction between observed, source-backed, inferred, proposed,
   and unknown behavior.
 - Do not add a queue, recovery protocol, or new abstraction to every explanation.

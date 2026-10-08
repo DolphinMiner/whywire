@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; font-src 'none'; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <title>{{TITLE}} · Whywire</title>
 <style>
 :root { --paper: #f7f4ec; --white: #fffefa; --ink: #152725; --muted: #53635d; --line: #d8ddd6; --accent: #a65119; --soft: #f4e5d4; }
@@ -58,19 +59,22 @@ dd { margin: 0; }
 .flow-heading { margin: 1.5rem 0 1rem; }
 .flow-heading h3 { font-size: 1rem; margin-bottom: .2rem; }
 .flow-heading p { font-size: .8rem; color: var(--muted); margin: 0; }
-.flow-map { display: grid; grid-template-columns: repeat(var(--steps), minmax(0, 1fr)); gap: 1.15rem; list-style: none; padding: 0; margin: 1.2rem 0 1.5rem; }
-.flow-map li { min-width: 0; position: relative; padding: .8rem .7rem; background: var(--paper); border: 1px solid var(--line); border-radius: 5px; }
-.flow-map li:not(:last-child)::after { content: ""; position: absolute; width: .8rem; height: 1px; background: var(--accent); top: 25px; right: -.95rem; }
-.flow-map li:not(:last-child)::before { content: ""; position: absolute; height: 5px; width: 5px; border-right: 1px solid var(--accent); border-top: 1px solid var(--accent); transform: rotate(45deg); top: 23px; right: -.95rem; }
-.flow-map strong { display: block; margin: .7rem 0 .35rem; font-size: .85rem; line-height: 1.4; overflow-wrap: anywhere; }
-.flow-map li > span:last-child { display: block; font-size: .73rem; color: var(--muted); overflow-wrap: anywhere; }
-.map-number { color: var(--accent); font-size: .77rem; font-weight: 600; font-variant-numeric: tabular-nums; }
-.flow-map-long { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
-.flow-map-long li { padding: .7rem 1rem .7rem 3rem; }
-.flow-map-long .map-number { position: absolute; left: 1rem; top: .8rem; }
-.flow-map-long strong { margin: 0 0 .15rem; }
-.flow-map-long li:not(:last-child)::after { width: 1px; height: .8rem; top: auto; bottom: -.95rem; left: 1.2rem; }
-.flow-map-long li:not(:last-child)::before { transform: rotate(135deg); top: auto; bottom: -.95rem; left: calc(1.2rem - 2px); }
+ .diagram { margin: 1rem 0 1.5rem; }
+.diagram-tools { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; margin-bottom: .8rem; }
+.diagram-tools[hidden] { display: none; }
+.diagram-tools button { font: inherit; font-size: .8rem; padding: .35rem .65rem; background: var(--white); border: 1px solid var(--line); border-radius: 5px; color: var(--ink); cursor: pointer; }
+.diagram-tools button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.diagram-tools button:hover { border-color: var(--accent); }
+.diagram-tools span { font-size: .75rem; color: var(--muted); }
+.diagram-viewport { overflow: auto; scrollbar-color: var(--muted) var(--paper); padding: .5rem; border: 1px solid var(--line); border-radius: 5px; background: var(--white); }
+.diagram-svg { width: min(100%, var(--diagram-width)); margin-inline: auto; }
+.diagram-svg svg { display: block; max-width: none !important; width: 100%; height: auto; }
+.diagram[data-size="actual"] .diagram-svg { width: var(--diagram-width); }
+.diagram-status { font-size: .85rem; color: var(--muted); }
+.diagram[data-state="error"] .diagram-status { color: var(--accent); }
+.diagram[data-state="error"] .diagram-viewport { display: none; }
+.renderer-license { margin-top: 1rem; }
+.renderer-license pre { white-space: pre-wrap; }
 .flow { margin: 0; padding: 0; list-style: none; }
 .step-details .flow { margin-top: 1.2rem; }
 .flow-step { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 1rem; position: relative; padding-bottom: 1.35rem; }
@@ -116,18 +120,13 @@ footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem;
   .scenario h2 { font-size: 1.15rem; }
   .flow-step { gap: .7rem; }
   .component { display: block; margin-left: 0; }
-  .flow-map { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
-  .flow-map li { padding: .7rem 1rem .7rem 3rem; }
-  .flow-map .map-number { position: absolute; left: 1rem; top: .8rem; }
-  .flow-map strong { margin: 0 0 .15rem; }
-  .flow-map li:not(:last-child)::after { width: 1px; height: .8rem; top: auto; bottom: -.95rem; left: 1.2rem; }
-  .flow-map li:not(:last-child)::before { transform: rotate(135deg); top: auto; bottom: -.95rem; left: calc(1.2rem - 2px); }
+
 }
 @media print {
   body { background: white; font-size: 11pt; }
   .topbar { color: var(--ink); background: white; padding: 0 0 1rem; border-bottom: 1px solid var(--line); }
   .tagline { color: var(--muted); }
-  .sidebar, .print, .skip, .scenario > summary::after { display: none !important; }
+  .sidebar, .print, .skip, .diagram-tools, .scenario > summary::after { display: none !important; }
   .layout { display: block; padding: 1.5rem 0; max-width: none; }
   .overview { margin-bottom: 1.5rem; }
   .scenario { break-inside: auto; }
@@ -136,6 +135,10 @@ footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem;
   details::details-content { content-visibility: visible !important; }
   details > :not(summary) { display: block !important; }
   .scenario-context { display: grid !important; }
+  .diagram-viewport { overflow: visible; }
+  .diagram[data-size="actual"] .diagram-svg { width: 100%; }
+  .diagram-source, .renderer-license { display: none; }
+  .scenario:has(.diagram:not([data-state="ready"])) .diagram-source { display: block; }
   a { text-decoration: none; }
 }
 </style>
@@ -149,10 +152,11 @@ footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem;
 <main>
 <section id="scenarios" aria-label="{{LABEL_SCENARIOS}}">{{SCENARIOS}}</section>
 {{OMITTED}}
-<footer>{{LABEL_FOOTER}}</footer>
+<footer>{{LABEL_FOOTER}}<details class="renderer-license"><summary>{{LABEL_LICENSES}}</summary><pre>{{MERMAID_LICENSE}}</pre></details></footer>
 </main>
 </div>
-<script>
+<script id="mermaid-runtime">{{MERMAID_RUNTIME}}</script>
+<script id="guide-interactions">
 const scenarios = [...document.querySelectorAll('.scenario')];
 const links = [...document.querySelectorAll('nav a')];
 function selectScenario(id) {
@@ -170,9 +174,47 @@ function selectScenario(id) {
 for (const link of links) link.addEventListener('click', () => selectScenario(link.hash.slice(1)));
 window.addEventListener('hashchange', selectScenario);
 selectScenario();
+const diagrams = [...document.querySelectorAll('.diagram')];
+// Render into Mermaid's visible body staging area, including closed scenarios.
+// This preserves text measurements and prepares every diagram for printing.
+const diagramsReady = (async () => {
+  if (window.mermaid) mermaid.initialize({
+    startOnLoad: false, securityLevel: 'strict', htmlLabels: false,
+    suppressErrorRendering: true, maxTextSize: 20000,
+    theme: 'base', fontFamily: 'Arial, sans-serif',
+    themeVariables: { primaryColor: '#f7f4ec', primaryTextColor: '#152725', primaryBorderColor: '#53635d', lineColor: '#53635d', actorBkg: '#f7f4ec', actorBorder: '#53635d', actorTextColor: '#152725', actorLineColor: '#a9b5ad', signalColor: '#152725', signalTextColor: '#152725', noteBkgColor: '#f4e5d4', noteBorderColor: '#bc895e', noteTextColor: '#152725', labelBoxBkgColor: '#f7f4ec', labelBoxBorderColor: '#53635d', labelTextColor: '#152725', loopTextColor: '#152725', fontSize: '16px' },
+    sequence: { useMaxWidth: false, mirrorActors: false, wrap: true, actorMargin: 40, width: 120, height: 40, messageMargin: 20 },
+  });
+  for (const [index, diagram] of diagrams.entries()) {
+    const source = diagram.closest('.scenario').querySelector('.diagram-source');
+    const status = diagram.querySelector('.diagram-status');
+    status.hidden = false;
+    diagram.dataset.state = 'loading';
+    try {
+      if (!window.mermaid) throw new Error('Renderer unavailable');
+      const { svg } = await mermaid.render('whywire-diagram-' + index, source.querySelector('code').textContent);
+      diagram.querySelector('.diagram-svg').innerHTML = svg;
+      const rendered = diagram.querySelector('svg');
+      diagram.style.setProperty('--diagram-width', rendered.viewBox.baseVal.width + 'px');
+      diagram.dataset.state = 'ready';
+      status.hidden = true;
+      const selectSize = size => {
+        diagram.dataset.size = size;
+        for (const button of diagram.querySelectorAll('[data-size]')) button.setAttribute('aria-pressed', String(button.dataset.size === size));
+      };
+      selectSize(matchMedia('(max-width: 600px)').matches ? 'actual' : 'fit');
+      for (const button of diagram.querySelectorAll('[data-size]')) button.addEventListener('click', () => selectSize(button.dataset.size));
+      diagram.querySelector('.diagram-tools').hidden = false;
+    } catch {
+      diagram.dataset.state = 'error';
+      status.textContent = diagram.dataset.error;
+      source.open = true;
+    }
+  }
+})();
 const printButton = document.querySelector('.print');
 printButton.hidden = false;
-printButton.addEventListener('click', () => window.print());
+printButton.addEventListener('click', async () => { await diagramsReady; window.print(); });
 let beforePrint = [];
 window.addEventListener('beforeprint', () => {
   beforePrint = [...document.querySelectorAll('details')].map(detail => [detail, detail.open]);

@@ -18,38 +18,79 @@
           "title": "Ask for item-1",
           "component": "Caller · demo",
           "detail": "Create a cache and an origin, then pass both to the read function.",
-          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "demo", "line": 28 }]
+          "sources": [
+            {
+              "file": "examples/cache-read/app.py",
+              "symbol": "demo",
+              "line": 28
+            }
+          ]
         },
         {
           "title": "Look in the cache",
           "component": "read_item",
           "detail": "The key is absent, so this request continues past the early-return branch.",
-          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "read_item", "line": 17 }]
+          "sources": [
+            {
+              "file": "examples/cache-read/app.py",
+              "symbol": "read_item",
+              "line": 17
+            }
+          ]
         },
         {
           "title": "Read the original value",
           "component": "Origin.read",
           "detail": "The origin returns blue mug and increments its read counter.",
-          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "Origin.read", "line": 11 }, { "file": "examples/cache-read/app.py", "symbol": "read_item", "line": 21 }]
+          "sources": [
+            {
+              "file": "examples/cache-read/app.py",
+              "symbol": "Origin.read",
+              "line": 11
+            },
+            {
+              "file": "examples/cache-read/app.py",
+              "symbol": "read_item",
+              "line": 21
+            }
+          ]
         },
         {
           "title": "Keep a copy for the next read",
           "component": "Cache dict",
           "detail": "read_item stores the returned value under item-1 before responding.",
-          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "read_item", "line": 23 }]
+          "sources": [
+            {
+              "file": "examples/cache-read/app.py",
+              "symbol": "read_item",
+              "line": 23
+            }
+          ]
         },
         {
           "title": "Return blue mug",
           "component": "read_item → caller",
           "detail": "The function returns the value directly; no later delivery step is involved.",
-          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "read_item", "line": 25 }]
+          "sources": [
+            {
+              "file": "examples/cache-read/app.py",
+              "symbol": "read_item",
+              "line": 25
+            }
+          ]
         }
       ],
       "branches": [
-        { "condition": "If the key is already cached", "path": "read_item returns at line 19. It skips both the origin read and the cache write; see the second scenario." },
-        { "condition": "Ordering in this example", "path": "All calls are synchronous. Origin owns the original value; the cache stores a derived copy." }
+        {
+          "condition": "If the key is already cached",
+          "path": "read_item returns at line 19. It skips both the origin read and the cache write; see the second scenario."
+        },
+        {
+          "condition": "Ordering in this example",
+          "path": "All calls are synchronous. Origin owns the original value; the cache stores a derived copy."
+        }
       ],
-      "mermaid": "sequenceDiagram\n    participant C as Caller\n    participant S as read_item\n    participant K as Cache dict\n    participant O as Origin object\n    C->>S: read item-1\n    S->>K: look up item-1\n    K-->>S: absent\n    S->>O: read item-1\n    O-->>S: blue mug\n    S->>K: store item-1 = blue mug\n    S-->>C: blue mug"
+      "mermaid": "sequenceDiagram\n    participant C as Caller\n    participant R as read_item\n    participant K as Cache dict\n    participant O as Origin\n    C->>R: Request item-1\n    R->>K: Look up item-1\n    K-->>R: Not cached\n    R->>O: Read item-1\n    O-->>R: blue mug\n    R->>K: Save blue mug\n    R-->>C: Return blue mug"
     },
     {
       "id": "repeat-read",
@@ -63,24 +104,51 @@
           "title": "Request item-1 again",
           "component": "Caller · demo",
           "detail": "The second call reuses the objects from the first call, including its cached value.",
-          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "demo", "line": 32 }]
+          "sources": [
+            {
+              "file": "examples/cache-read/app.py",
+              "symbol": "demo",
+              "line": 32
+            }
+          ]
         },
         {
           "title": "Find the stored value",
           "component": "read_item",
           "detail": "The key is present, so the function takes the cache-hit branch.",
-          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "read_item", "line": 17 }]
+          "sources": [
+            {
+              "file": "examples/cache-read/app.py",
+              "symbol": "read_item",
+              "line": 17
+            }
+          ]
         },
         {
           "title": "Return directly from the cache",
           "component": "Cache dict → caller",
           "detail": "The early return avoids the origin call below it. check() asserts equal responses and one origin read.",
-          "sources": [{ "file": "examples/cache-read/app.py", "symbol": "read_item", "line": 19 }, { "file": "examples/cache-read/app.py", "symbol": "check", "line": 37 }]
+          "sources": [
+            {
+              "file": "examples/cache-read/app.py",
+              "symbol": "read_item",
+              "line": 19
+            },
+            {
+              "file": "examples/cache-read/app.py",
+              "symbol": "check",
+              "line": 37
+            }
+          ]
         }
       ],
       "branches": [
-        { "condition": "If the origin changes", "path": "An existing cache entry is not refreshed. This fixture contains no invalidation or expiry policy." }
-      ]
+        {
+          "condition": "If the origin changes",
+          "path": "An existing cache entry is not refreshed. This fixture contains no invalidation or expiry policy."
+        }
+      ],
+      "mermaid": "sequenceDiagram\n    participant C as Caller\n    participant R as read_item\n    participant K as Cache dict\n    participant O as Origin\n    C->>R: Request item-1 again\n    R->>K: Look up item-1\n    K-->>R: blue mug\n    Note over R,O: Cache hit returns without calling Origin\n    R-->>C: Return blue mug"
     }
   ],
   "omitted": [

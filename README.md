@@ -13,11 +13,13 @@
 
 New to a repository? Whywire starts with **what the product does and how people
 use it**, then traces each included scenario from the user's action to the result.
-You get **one `whywire.html`** with diagrams, brief explanations, and source entry
-points. Open it in a browser and keep reading the code from there.
+You get **one `whywire.html`** with Mermaid diagrams, brief explanations, and
+source entry points. Open it in a browser and keep reading the code from there.
 
-The guide contains its own diagrams and styles, so it can be read offline.
-Source links still need access to the repository they refer to. The chat reply
+The guide embeds Mermaid 12.1.0 and its styles, so it can be read offline with
+no CDN or sibling files. Diagrams render as SVG in a compatible browser with
+JavaScript enabled; text, evidence, and diagram source remain readable without
+JavaScript. Source links still need access to their repository. The chat reply
 stays short: a summary, the HTML link, and the scope covered.
 
 ## See the output
@@ -25,8 +27,9 @@ stays short: a summary, the HTML link, and the scope covered.
 ![Whywire HTML guide: a product summary, a scenario, a request flow, and code entry points.](docs/previews/guide.png)
 
 Download the [HTML demo](examples/cache-read/guide.html) and open it in your
-browser. It follows two reads of the same item: the first fills the cache; the
-second returns the cached value without reading the origin again.
+browser. Its two sequence diagrams follow reads of the same item: the first
+fills the cache; the second returns the cached value without reading the origin
+again. Participants, calls, and return arrows show who does what.
 
 This is a **synthetic cache-read teaching case**, showing first and repeat reads with in-process Python
 objects. It demonstrates the output format, not a real product or a model
@@ -60,9 +63,11 @@ A guide follows this reading order:
 | Request flow | What starts each scenario, which modules handle it, how data changes, and how the result returns. |
 | Code entry points | The relevant files and functions beside the steps they explain. |
 
-Each scenario gets one compact flow and short explanations. Supporting evidence,
-diagram source, and deeper details stay available without dominating the first
-read. Relevant branches remain visible; an unexplored scenario is labeled rather
+Each scenario gets an authored Mermaid diagram and short explanations. Request
+flows normally use sequence diagrams, with participants, calls, returns, and
+relevant branches or asynchronous handoffs. Supporting evidence, diagram source,
+and deeper details stay available without dominating the first read. Relevant
+branches remain visible; an unexplored scenario is labeled rather
 than silently treated as covered.
 
 Small questions can stay in chat. An explicitly requested format takes precedence.
@@ -73,9 +78,11 @@ was actually run.
 ## Install
 
 Use an agent that supports Agent Skills and can read the project source.
-The bundled HTML builder needs **Node.js 18+**, with no npm dependencies. The
-`npx` installer below needs **Node.js 22.20+ and npm**; manually copying the skill
-does not need npm. Python is only used by repository maintainer checks.
+The bundled HTML builder needs **Node.js 18+** and uses only the Node standard
+library. The browser runtime ships with the skill; no npm install is needed to
+build or read a guide. The `npx` installer below needs **Node.js 22.20+ and npm**;
+manually copying the skill does not need npm. Python is only used by repository
+maintainer checks.
 
 Run this from the project whose source you want to understand:
 
@@ -94,6 +101,10 @@ directory into your agent's skill location, including `assets/`, `scripts/`,
 `references/`, `agents/`, and `LICENSE`. See the
 [validation record](docs/validation.md) for the actual checks; an installation
 check does not prove every host's native discovery or model behavior.
+
+Rebuilding an older 0.2 JSON input now requires an authored `mermaid` field for
+every scenario. Existing HTML files remain readable. See the
+[input and migration guide](skills/whywire/references/guide.md).
 
 ## Examples and source evidence
 
@@ -116,6 +127,8 @@ skills/whywire/             The complete installable skill
   SKILL.md                 Workflow and output contract
   scripts/build-guide.mjs  Standalone HTML builder; Node standard library only
   assets/guide.html        Embedded page template
+  assets/mermaid.min.js    Pinned Mermaid 12.1.0 browser runtime
+  assets/mermaid-LICENSE.txt  Mermaid's MIT license
   references/              Evidence, diagram, and guide-writing guidance
   agents/openai.yaml       Display and invocation metadata
   LICENSE                  License travels with copied installations
@@ -126,7 +139,8 @@ docs/                      Cover, screenshots, and validation record
 ```
 
 Only `skills/whywire/` is installed. The agent reads and explains the source;
-the small builder packages that explanation as an offline page. There is no
+the builder packages that explanation and one copy of the runtime as an offline
+page. The embedded runtime adds about 5.5 MB to each guide. There is no
 hosted service or automatic repository indexer.
 
 ## Develop and contribute
@@ -157,5 +171,7 @@ The packaging was informed by
 [Ponytail](https://github.com/DietrichGebert/ponytail).
 These are inspirations, not affiliations or endorsements.
 
-[MIT licensed](LICENSE). Whywire is pronounced “why-wire”: a wire you can follow
+[MIT licensed](LICENSE); the bundled Mermaid runtime includes its
+[MIT license](skills/whywire/assets/mermaid-LICENSE.txt).
+Whywire is pronounced “why-wire”: a wire you can follow
 to understand why something happens.

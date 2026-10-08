@@ -26,6 +26,8 @@ try {
   const guidePage = await browser.newPage();
   await guidePage.setViewport({ width: 1440, height: 1060, deviceScaleFactor: 1 });
   await guidePage.goto(pathToFileURL(guide).href, { waitUntil: 'load' });
+  await guidePage.waitForFunction(() => [...document.querySelectorAll('.diagram')].every(diagram => ['ready', 'error'].includes(diagram.dataset.state)));
+  if (await guidePage.$('.diagram[data-state="error"]')) throw new Error('Public guide contains a Mermaid rendering error');
   await guidePage.screenshot({ path: path.join(output, 'guide.png'), fullPage: true });
   await guidePage.close();
   console.log('Rendered docs/previews/guide.png from the standalone HTML.');

@@ -19,9 +19,15 @@ Small follow-up questions can remain short chat answers.
 
 ## Capabilities and Constraints
 
-The user confirmed this reading structure and single HTML on 2026-10-07.
+The user confirmed this reading structure and single HTML on 2026-10-07, and
+Mermaid diagrams in place of step-card diagrams on 2026-10-08. Each scenario
+has an authored diagram; request flows normally use participant lifelines,
+calls, and returns in a sequence diagram.
 Preserve source evidence and bounded coverage. A source walkthrough is not a
-runtime trace. The guide works offline; hosted source links require access.
+runtime trace. The guide embeds its Mermaid runtime and works offline;
+diagrams require JavaScript in a compatible browser. Text, source references,
+and native disclosures remain readable without JavaScript. Hosted source links
+require access.
 
 ## Brand Commitments
 

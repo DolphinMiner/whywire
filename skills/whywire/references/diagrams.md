@@ -2,6 +2,9 @@
 
 These diagrams are illustrative syntax examples, not claims about a repository.
 Replace their participants, ordering, and states with the inspected behavior.
+Every saved-guide scenario requires a nonempty `mermaid` field. The embedded
+Mermaid runtime renders that source as SVG; numbered step cards are not a diagram.
+Keep supporting explanations and source references in the native disclosures.
 
 ## A request crossing boundaries
 
@@ -23,9 +26,13 @@ sequenceDiagram
     A-->>C: Return value
 ```
 
-Use `alt` for mutually exclusive paths, `opt` for an optional step, and `par`
-only when concurrency is supported. An arrow is an operation or message, not
-proof of a durable transaction or delivery guarantee. Add a note for a gap.
+Prefer this participant-and-lifeline view for request flows. Show the call and
+return path, not just a list of modules. Use `alt` for mutually exclusive paths,
+`opt` for an optional step, and `par` only when concurrency is supported.
+An arrow is an operation or message, not
+proof of a durable transaction or delivery guarantee. Mark asynchronous handoffs
+explicitly and do not invent a synchronous return from later work. Add a note
+for a gap. Author these relationships from source, never from the `steps` labels.
 
 ## A lifecycle with an unresolved result
 
@@ -62,8 +69,14 @@ Switch to a sequence or lifecycle view when ordering changes the answer.
   in that text: Mermaid can interpret them as statement separators. Write
   `save payload and commit`, for example, instead of joining those operations
   with a semicolon. Prefer short words over parser-sensitive punctuation.
-- Keep source links and longer evidence notes in a table outside the diagram.
+- Keep source links and longer evidence in folded step explanations outside
+  the diagram.
 - Prefer standard diagram syntax over renderer-specific themes, HTML labels,
   click handlers, icons, or custom JavaScript.
+- Do not supply Mermaid configuration directives or YAML frontmatter. The
+  bundled template controls configuration and enforces strict security settings.
 - If an available renderer rejects the diagram, simplify and retry. A rendered
   diagram establishes syntactic renderability, not factual correctness.
+- Check the actual HTML offline. Mermaid requires JavaScript; its source and
+  the guide's text remain readable without it. Show render errors visibly and
+  retain the source instead of substituting a different kind of diagram.

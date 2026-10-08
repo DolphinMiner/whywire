@@ -60,7 +60,10 @@ Keep the visible guide focused on these questions:
 - Which code should I read or change next?
 
 Lead with a one-sentence product explanation. Give each scenario a short goal,
-one compact flow, and brief step explanations with code entry points. Aim for
+one Mermaid diagram, and brief step explanations with code entry points. Use a
+`sequenceDiagram` for request flows: show the real participants, calls, returns,
+and consequential branches or asynchronous handoffs. Choose another supported
+Mermaid view only when it explains the question better. Aim for
 5–8 steps when sufficient; preserve a necessary boundary rather than meeting a
 quota. Make each step an operation, not just a component name. Avoid repeating
 the same explanation in an introduction, table, diagram, and conclusion.
@@ -73,9 +76,13 @@ guide, not a transcript of the investigation.
 ## Deliver one HTML
 
 Read [references/guide.md](references/guide.md) and use the bundled template and
-zero-dependency builder. Fill a temporary JSON input with the inspected product,
-scenarios, flows, and sources. The helper renders **authored flow steps**; it
-does not discover architecture, execute requests, or render Mermaid.
+Node standard-library builder. Fill a temporary JSON input with the inspected
+product, scenarios, Mermaid, and sources. Every scenario requires an authored
+`mermaid` field; follow [references/diagrams.md](references/diagrams.md). Read the
+source to draw it. Do not derive a diagram from step titles: the `steps` field
+supplies the folded explanation and evidence, not the participants or arrows.
+The builder embeds the pinned Mermaid runtime once; the browser renders SVG.
+It does not discover architecture or execute the project's requests.
 
 ```sh
 node /path/to/whywire/scripts/build-guide.mjs /path/to/input.json /path/to/whywire.html
@@ -83,21 +90,23 @@ node /path/to/whywire/scripts/build-guide.mjs /path/to/input.json /path/to/whywi
 
 Keep preparation files outside the repository unless the user asks to keep them.
 Deliver the HTML as the single reading entry point. Its content, diagrams,
-styles, and interactions must work offline with no sibling files or CDN. Keep
-source paths and symbols readable even when a source URL cannot be opened.
-Optional Mermaid source belongs inside a collapsed section of that same file;
-use [references/diagrams.md](references/diagrams.md) only when useful.
+styles, and interactions must work offline with no sibling files or CDN.
+Diagrams require JavaScript in a compatible browser; text, source references,
+and native disclosures remain readable without it. Keep the Mermaid source in
+the same file. A rendering failure must be visible, with source available to
+inspect; do not replace the diagram with a row of step cards.
 
-If Node is unavailable, author the same standalone HTML directly using the
-template's reading structure; do not install tooling just to force a preview.
+If Node is unavailable, author the same standalone HTML using the bundled
+template and embedded runtime; do not install tooling just to force a preview.
 If file output is unavailable, explain the limitation and give a compact inline
 guide without claiming an HTML artifact exists.
 
 Before delivery, check scenario coverage, supporting source for key steps,
 input-to-result completeness, and local links or declared reference limitations.
 Open the actual HTML when a browser is available: check scenario navigation,
-expandable evidence, readable flow labels, and narrow-screen layout. If preview
-is unavailable, report it. Do not treat render or packaging checks as validation
+expandable evidence, actual SVG rendering, readable participants and arrows,
+and narrow-screen diagram scrolling. If preview is unavailable, report it.
+Do not treat render or packaging checks as validation
 of the project's runtime behavior.
 
 Finish with the product conclusion, the HTML link, and a short scope/verification

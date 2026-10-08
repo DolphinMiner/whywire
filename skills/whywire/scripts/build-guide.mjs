@@ -3,6 +3,8 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const template = await readFile(new URL('../assets/guide.html', import.meta.url), 'utf8');
+const renderer = await readFile(new URL('../assets/mermaid.min.js', import.meta.url), 'utf8');
+const rendererLicense = await readFile(new URL('../assets/mermaid-LICENSE.txt', import.meta.url), 'utf8');
 const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const text = (value, label) => {
   if (typeof value !== 'string' || !value.trim()) throw new Error(`${label} must be non-empty text`);
@@ -18,7 +20,8 @@ const labels = {
     guide: 'A guide through the code', scenarios: 'Choose a scenario', audience: 'Who this is for',
     scope: 'What this guide covers', revision: 'Source revision', about: 'About this guide', actor: 'Who acts', trigger: 'Starts with',
     outcome: 'What they get', flow: 'Follow the request', schematic: 'A source-based path. Branches and timing are noted below.',
-    branches: 'Branches & timing', stepDetails: 'Step explanations & code entry points', mermaid: 'View diagram source', sourceNote: 'Editable Mermaid source; the reading view above uses native HTML.',
+    branches: 'Branches & timing', stepDetails: 'Step explanations & code entry points', mermaid: 'View Mermaid source', sourceNote: 'Editable Mermaid source for this scenario.',
+    fit: 'Fit to width', actual: 'Actual size', loading: 'Rendering diagram…', diagramError: 'Diagram could not render. Check the Mermaid source below.', noScript: 'Enable JavaScript to render the diagram. Its source and step explanations are available below.', diagramHint: 'Use actual size and scroll to read a wide diagram.', licenses: 'Mermaid license',
     omitted: 'Outside this guide', footer: 'Based on inspected source, not a recorded runtime trace. Source references remain readable offline; web links need a connection.',
     print: 'Print / save PDF', skip: 'Skip to scenarios', steps: 'steps',
   },
@@ -26,7 +29,8 @@ const labels = {
     guide: '沿着请求读懂代码', scenarios: '选择使用场景', audience: '适合谁阅读',
     scope: '本次梳理范围', revision: '源码版本', about: '阅读范围与源码', actor: '谁来操作', trigger: '从这里开始',
     outcome: '最终得到什么', flow: '跟随一次请求', schematic: '根据源码整理的路径；分支与时序说明见下方。',
-    branches: '分支与时序', stepDetails: '步骤解释与代码入口', mermaid: '查看图形源码', sourceNote: '可编辑的 Mermaid 源码；上方阅读视图使用原生 HTML。',
+    branches: '分支与时序', stepDetails: '步骤解释与代码入口', mermaid: '查看 Mermaid 源码', sourceNote: '这个场景对应的可编辑 Mermaid 源码。',
+    fit: '适应宽度', actual: '原始大小', loading: '正在绘制图形…', diagramError: '图形渲染失败，请检查下方 Mermaid 源码。', noScript: '启用 JavaScript 可查看图形；下方仍可阅读源码和步骤解释。', diagramHint: '宽图可切换原始大小，横向滚动阅读。', licenses: 'Mermaid 许可证',
     omitted: '本次未展开', footer: '根据已阅读的源码梳理，不代表实际运行追踪。源码位置可离线阅读；网页链接需要联网。',
     print: '打印 / 保存 PDF', skip: '跳到使用场景', steps: '步',
   },
@@ -67,7 +71,12 @@ export function renderGuide(input) {
       const sources = list(step.sources, `${stepLabel}.sources`).map((source, i) => sourceMarkup(source, `${stepLabel}.sources[${i}]`)).join('');
       return `<li class="flow-step"><span class="step-number" aria-hidden="true">${stepIndex + 1}</span><div><h4>${escape(step.title)} <span class="component">${escape(step.component)}</span></h4><p>${escape(step.detail)}</p><div class="sources">${sources}</div></div></li>`;
     }).join('\n');
-    const flowMap = `<ol class="flow-map${scenario.steps.length > 6 ? ' flow-map-long' : ''}" style="--steps: ${scenario.steps.length}">${scenario.steps.map((step, i) => `<li><span class="map-number" aria-hidden="true">${i + 1}</span><strong>${escape(step.title)}</strong><span>${escape(step.component)}</span></li>`).join('')}</ol>`;
+    const diagram = text(scenario.mermaid, `${label}.mermaid`);
+    const header = diagram.split(/\r?\n/).find(line => line.trim() && !line.trim().startsWith('%%'))?.trim();
+    if (diagram.length > 20000 || /%%\s*\{/.test(diagram) || !/^(?:sequenceDiagram\b|flowchart\b|graph\b|stateDiagram(?:-v2)?\b)/.test(header ?? '')) {
+      throw new Error(`${label}.mermaid must be a sequence, flowchart, or state diagram of at most 20000 characters, without configuration directives or frontmatter`);
+    }
+    const flowMap = `<div class="diagram" data-error="${t.diagramError}"><div class="diagram-tools" hidden><button type="button" data-size="fit" aria-pressed="true">${t.fit}</button><button type="button" data-size="actual" aria-pressed="false">${t.actual}</button><span>${t.diagramHint}</span></div><p class="diagram-status" role="status" hidden>${t.loading}</p><div class="diagram-viewport" tabindex="0" role="region" aria-label="${escape(scenario.title)}"><div class="diagram-svg"></div></div><noscript><p>${t.noScript}</p></noscript></div>`;
     let branches = '';
     if (scenario.branches !== undefined) {
       if (!Array.isArray(scenario.branches)) throw new Error(`${label}.branches must be an array`);
@@ -77,8 +86,7 @@ export function renderGuide(input) {
         return `<dt>${escape(text(branch.condition, `${branchLabel}.condition`))}</dt><dd>${escape(text(branch.path, `${branchLabel}.path`))}</dd>`;
       }).join('')}</dl></details>`;
     }
-    let mermaid = '';
-    if (scenario.mermaid !== undefined) mermaid = `<details class="supplement"><summary>${t.mermaid}</summary><p>${t.sourceNote}</p><pre><code>${escape(text(scenario.mermaid, `${label}.mermaid`))}</code></pre></details>`;
+    const mermaid = `<details class="supplement diagram-source"><summary>${t.mermaid}</summary><p>${t.sourceNote}</p><pre><code>${escape(diagram)}</code></pre></details>`;
     return `<details class="scenario" id="scenario-${escape(scenario.id)}"${index === 0 ? ' open' : ''}>
       <summary><span><h2>${escape(scenario.title)}</h2><span class="scenario-summary">${escape(scenario.summary)}</span></span><span class="step-count">${scenario.steps.length} ${t.steps}</span></summary>
       <div class="scenario-body"><p class="scenario-outcome"><strong>${t.outcome}</strong> ${escape(scenario.outcome)}</p>
@@ -93,6 +101,7 @@ export function renderGuide(input) {
     LANG: input.lang, TITLE: escape(input.title), SUMMARY: escape(input.summary),
     AUDIENCE: escape(input.audience), SCOPE: escape(input.scope), REVISION: escape(input.revision),
     SCENARIOS: content, OMITTED: omitted,
+    MERMAID_RUNTIME: renderer.replace(/<\/script/gi, '<\\/script'), MERMAID_LICENSE: escape(rendererLicense),
     NAV: scenarios.map((scenario, index) => `<li><a href="#scenario-${escape(scenario.id)}"${index === 0 ? ' aria-current="location"' : ''}>${escape(scenario.title)}</a></li>`).join('\n'),
     ...Object.fromEntries(Object.entries(t).map(([key, value]) => [`LABEL_${key.toUpperCase()}`, value])),
   };

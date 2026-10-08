@@ -1,6 +1,6 @@
 {
   "name": "whywire",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "An Agent Skill for understanding a project's user scenarios and request flows in one source-backed HTML guide.",
   "license": "MIT",

@@ -1,5 +1,43 @@
 # Validation record
 
+## Mermaid swimlane restoration — 2026-10-08
+
+Version 0.3.0 replaces the HTML step-map with real Mermaid diagrams. Each
+scenario requires authored Mermaid source; request walkthroughs use sequence
+lifelines, calls, returns, and relevant parallel or conditional paths. Step
+explanations and source locators remain folded below the diagram.
+
+The installed skill contains the exact Mermaid 12.1.0 browser bundle and its
+upstream license. The generated HTML embeds both and needs no CDN or sibling
+files. This adds about 5.5 MB per guide. The Node builder still needs no npm
+installation; diagram rendering requires a browser with JavaScript enabled.
+Native disclosures, step explanations, and Mermaid source remain available
+without JavaScript. Older input JSON needs an authored `mermaid` field for each
+scenario; previously generated HTML remains readable.
+
+The repository checks now render the actual standalone HTML in an isolated
+browser with HTTP requests blocked. They cover sequence diagrams in initially
+open and closed scenarios, flowcharts, state diagrams, a malformed diagram
+beside a valid one, hostile HTML labels, and visible no-script fallback. No HTTP
+requests were observed. Input checks reject missing diagrams, oversized source,
+configuration directives, and frontmatter; upstream bundle and license bytes
+are compared with the lockfile-pinned package. Copied installations for Codex
+and Claude Code include all ten files and reproduce the complete HTML.
+
+The existing private-project trial was updated from source, rather than counted
+as a new independent skill-quality evaluation. Five authored sequence diagrams
+use four to six lanes and 13–18 key arrows each. All five rendered with the CLI
+and inside the generated HTML; 68 source references were checked. One Dashboard
+event description was made more precise while tracing the callers. Main paths
+were shortened after the first draft; detailed recovery remains in the folded
+explanations. This remains source analysis, not application runtime validation.
+
+The actual guide was inspected at 1280px, 591px, and 390px. Scenario navigation,
+fit/actual size, horizontal scrolling, source/error disclosure, and page
+overflow were checked. Screenshots and private inputs remain outside the
+repository. Print state handling was reviewed in code; PDF appearance was not
+visually validated. The README preview was regenerated from the public HTML.
+
 ## Standalone HTML guide update — 2026-10-07
 
 Version 0.2.0 changes the saved walkthrough to one offline HTML guide. Product

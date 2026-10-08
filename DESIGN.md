@@ -54,10 +54,10 @@ components:
   scenario:
     backgroundColor: "{colors.white}"
     rounded: "{rounded.scenario}"
-  flow-node:
-    backgroundColor: "{colors.paper}"
+  diagram-viewport:
+    backgroundColor: "{colors.white}"
     rounded: "{rounded.compact}"
-    padding: ".8rem .7rem"
+    padding: ".5rem"
   evidence-disclosure:
     padding: ".8rem 0"
 ---
@@ -73,20 +73,22 @@ Warm paper, a dark masthead, and quiet bordered sections support reading.
 
 ## Colors
 
-**Primary:** `accent` marks flow numbers, arrows, symbols, link hover, and keyboard
+**Primary:** `accent` marks evidence numbers, symbols, link hover, and keyboard
 focus. `soft` supports the numbered evidence trail.
 
 **Neutral:** `ink` is the body text, masthead, and current navigation background;
-`paper` is the page and diagram surface; `white` separates scenario sections.
+`paper` is the page and participant surface; `white` separates scenario sections
+and diagram viewports. Diagram signals use `ink`.
 `muted` carries secondary explanations; `line` divides evidence and containers.
 
 ## Typography
 
-Use the system sans-serif stack throughout and the system monospace stack for
-source paths and code. Both work offline without font downloads. The display
-role titles the guide; the headline role names scenarios. Diagram operations
-are bold, while component names are smaller and muted. Introduction and summary
-lines stay within 65ch; detailed explanations stay within 70ch.
+Use the system sans-serif stack for prose and the system monospace stack for
+source paths and code. Mermaid uses Arial with a sans-serif fallback. All work
+offline without font downloads. The display role titles the guide; the headline
+role names scenarios. Mermaid participant and message labels remain readable
+at their rendered size. Introduction and summary lines stay within 65ch;
+detailed explanations stay within 70ch.
 
 ## Layout
 
@@ -95,10 +97,13 @@ flexible reading column. At 800px and below, the rail becomes wrapping navigatio
 below the introduction. At 520px and below, page padding narrows, scenario
 metadata stacks, and secondary masthead text and step counts are hidden.
 
-**The Readable Path Rule.** Authored steps form a native HTML diagram. Up to six
-steps run horizontally when space permits; more than six steps, and all flows
-at 520px and below, run vertically. Keep operation labels short and allow long
-component names and source paths to wrap.
+**The Readable Path Rule.** Each scenario renders its authored Mermaid as SVG,
+normally a sequence diagram with participant lifelines, calls, and returns.
+The desktop view shrinks wide diagrams to fit the reading column without
+enlarging smaller diagrams; an Actual size control preserves the SVG's original
+width. Screens at 600px or below start at actual size and scroll inside their
+own viewport. Preserve the diagram's layout rather than converting it to a
+vertical list of steps. Keep labels concise and source paths wrappable.
 
 ## Elevation & Depth
 
@@ -108,7 +113,7 @@ separation. Keep this flat reading treatment when extending the guide.
 
 ## Shapes
 
-Scenario containers use the larger radius; controls, navigation, diagram nodes,
+Scenario containers use the larger radius; controls, navigation, diagram viewports,
 and code blocks use the compact radius. Expanded evidence has circular numbered
 markers connected by thin arrows. Containers and separators use 1px borders.
 
@@ -123,9 +128,10 @@ markers connected by thin arrows. Containers and separators use 1px borders.
 - **Scenario disclosure:** a native `details` section with a title, short summary,
   step count, and plus/minus indicator. The first scenario starts open. Its
   visible body leads with the outcome and diagram.
-- **Flow diagram:** an ordered list of authored operations, each with a number,
-  title, and component label. CSS supplies the connectors. Mermaid, when
-  supplied, remains optional editable source in a folded disclosure.
+- **Flow diagram:** the scenario's required Mermaid source renders as SVG using
+  the pinned runtime embedded in the HTML. Fit to width / Actual size controls
+  preserve legibility across viewports. The source remains in a folded disclosure;
+  rendering errors are visible and reveal that source.
 - **Evidence disclosure:** native `details` contains step explanations and code
   entry points; branches and timing use a separate folded section. Source paths
   and symbols remain readable offline, whether or not a web URL is available.
@@ -133,6 +139,8 @@ markers connected by thin arrows. Containers and separators use 1px borders.
 All interactive elements retain a visible accent focus outline (3px with a 4px
 offset). Preserve native keyboard behavior and the focus-revealed skip link.
 Print hides navigation and controls and exposes the complete reading content.
+Diagrams require JavaScript; text, source references, and native disclosures
+remain available without it.
 
 ## Do's and Don'ts
 
@@ -143,5 +151,5 @@ Print hides navigation and controls and exposes the complete reading content.
 - **Do** state the inspected scope and distinguish a source-based diagram from
   a recorded runtime trace.
 - **Don't** turn this guide into a dashboard or an architecture editing surface.
-- **Don't** introduce remote fonts, icon bundles, or a diagram runtime for the
-  reading view; the current artifact is one offline HTML file.
+- **Don't** introduce remote fonts, icon bundles, or a CDN dependency. The
+  Mermaid runtime is embedded once in the single offline HTML file.

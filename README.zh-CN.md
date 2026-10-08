@@ -13,10 +13,12 @@
 
 第一次接触项目？Whywire 先解释**产品能做什么、用户有哪些使用场景**，
 再沿着每个纳入范围的场景，跟踪请求如何流转、结果如何返回。
-你得到的是**一份 `whywire.html`**：流程图、简短解释，以及对应的代码入口。
+你得到的是**一份 `whywire.html`**：Mermaid 图、简短解释，以及对应的代码入口。
 用浏览器打开，读完就知道接下来该看哪段代码。
 
-图和样式内嵌在文件中，可以离线阅读；源码链接仍需要访问其指向的仓库。
+Mermaid 12.1.0 和样式内嵌在文件中，无需 CDN 或同目录附件即可离线阅读。
+图在兼容浏览器中通过 JavaScript 渲染为 SVG；关闭 JavaScript 后，文字、证据和图形源码仍可阅读。
+源码链接仍需要访问其指向的仓库。
 聊天里只给摘要、HTML 入口和覆盖范围，不再重复整篇长文。
 
 ## 用完会得到什么？
@@ -24,7 +26,8 @@
 ![Whywire HTML 导读：产品介绍、使用场景、请求流转与代码入口。](docs/previews/guide.png)
 
 下载 [HTML 示例](examples/cache-read/guide.html)，用浏览器打开。
-它讲解同一个条目被读取两次的场景：第一次填充缓存，第二次直接返回缓存值，不再回源。
+两张时序图讲解同一个条目被读取两次的场景：第一次填充缓存，第二次直接返回缓存值，不再回源。
+参与者、调用和返回箭头展示每个组件做了什么。
 
 这是使用进程内 Python 对象的**缓存读取教学模拟**，展示首次与再次读取的路径和交付形式，
 不代表真实产品，也不是模型效果评测。可以核查[源码](examples/cache-read/app.py)、
@@ -55,7 +58,8 @@
 | 跟随请求 | 从哪里触发、谁来处理、数据如何变化、结果怎样回来？ |
 | 继续读代码 | 每一步对应哪些文件和函数？ |
 
-每个场景只展示一张紧凑的流程图和简短解释。证据、图形源码和深入细节保留在折叠内容中。
+每个场景展示一张基于源码编写的 Mermaid 图和简短解释。请求流转默认使用时序图，
+展示参与者、调用、返回，以及相关分支或异步交接。证据、图形源码和深入细节保留在折叠内容中。
 影响理解的分支仍然展示；尚未梳理的场景明确标注，不把局部分析说成覆盖了整个项目。
 
 小问题可以直接在聊天中回答，用户指定的格式优先。
@@ -65,7 +69,8 @@
 ## 安装
 
 使用支持 Agent Skills、能够访问待解释源码的 Agent。
-内置 HTML 生成器需要 **Node.js 18+**，没有 npm 依赖。
+内置 HTML 生成器需要 **Node.js 18+**，仅使用 Node 标准库。
+浏览器端运行库随 Skill 分发，生成和阅读导读无需安装 npm 包。
 下方的 `npx` 安装方式需要 **Node.js 22.20+ 和 npm**；手动复制 Skill 不需要 npm。
 Python 仅用于仓库维护者检查。
 
@@ -83,6 +88,9 @@ Claude Code 用户把 `--agent codex` 换成 `--agent claude-code`。
 手动安装时，把**整个** `skills/whywire/` 复制到宿主的 Skill 目录，保留
 `assets/`、`scripts/`、`references/`、`agents/` 和 `LICENSE`。
 实际检查范围见[验证记录](docs/validation.md)；安装检查不等于所有宿主的原生发现流程或模型效果都已验证。
+
+重新生成旧版 0.2 JSON 输入时，需要为每个场景补充基于源码编写的 `mermaid` 字段。
+已有 HTML 文件仍可直接阅读。详见[输入与迁移说明](skills/whywire/references/guide.md)。
 
 ## 案例与源码依据
 
@@ -103,6 +111,8 @@ skills/whywire/             完整可安装的 Skill
   SKILL.md                 工作流程与交付约定
   scripts/build-guide.mjs  独立 HTML 生成器，仅使用 Node 标准库
   assets/guide.html        内嵌页面模板
+  assets/mermaid.min.js    固定版本的 Mermaid 12.1.0 浏览器运行库
+  assets/mermaid-LICENSE.txt  Mermaid 的 MIT 许可证
   references/              证据规则、画图与导读编写指南
   agents/openai.yaml       展示及调用元数据
   LICENSE                  随安装副本分发的许可证
@@ -113,7 +123,8 @@ docs/                      封面、截图和验证记录
 ```
 
 真正安装的只有 `skills/whywire/`。Agent 负责阅读和解释源码，
-小型生成器把解释打包成可离线阅读的页面。不需要托管服务，也没有自动全库索引。
+生成器把解释和一份运行库打包成可离线阅读的页面。内嵌运行库会为每份导读增加约 5.5 MB。
+不需要托管服务，也没有自动全库索引。
 
 ## 开发与贡献
 
@@ -140,4 +151,5 @@ npm run demo:guide
 [Karpathy Skills](https://github.com/multica-ai/andrej-karpathy-skills) 和
 [Ponytail](https://github.com/DietrichGebert/ponytail)。这些是灵感来源，不代表合作或背书。
 
-使用 [MIT 许可证](LICENSE)。Whywire 读作「why-wire」：顺着一条线，看懂系统为何这样运行。
+使用 [MIT 许可证](LICENSE)，内嵌 Mermaid 运行库附带其 [MIT 许可证](skills/whywire/assets/mermaid-LICENSE.txt)。
+Whywire 读作「why-wire」：顺着一条线，看懂系统为何这样运行。
