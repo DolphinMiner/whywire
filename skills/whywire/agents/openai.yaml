@@ -1,4 +1,4 @@
 interface:
   display_name: "Whywire"
-  short_description: "Explore a project's scenarios in one HTML guide"
-  default_prompt: "Use $whywire to explain this project's purpose and main user scenarios in one concise HTML guide, tracing each included request flow and linking its steps to source code."
+  short_description: "Explore a product, its code, and request flows"
+  default_prompt: "Use $whywire to create one concise HTML guide with product overview, verified technology stack, code package responsibilities, and the main user scenarios. Trace each included request with Mermaid and link its steps to source code."

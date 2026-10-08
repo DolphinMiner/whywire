@@ -1,5 +1,41 @@
 # Validation record
 
+## Three-page guide and readable evidence — 2026-10-08
+
+Version 0.4.0 keeps one offline HTML and adds three hash-navigable reading pages:
+product overview, code structure, and request scenarios. Overview includes
+source-backed features and technology roles; structure explains inspected
+packages and their entry points. Existing 0.3 inputs still build, with an honest
+uncovered state for missing new content rather than inferred facts.
+
+Scenario prose now separates actor, trigger and outcome; numbered steps group
+the operation, responsible module, explanation and symbol-first source entries.
+Branches pair a condition with its handling. Reading advice has its own section.
+All authored Mermaid diagrams and their offline runtime remain intact.
+
+`npm run check` passed 54 local file/line links, input and escaping checks,
+three executable fixtures, actual browser rendering, and six Mermaid diagrams
+across four Markdown files. New browser regressions verify the default page,
+page and feature links, direct hashes, browser history, reload, diagram sizing,
+all-page print visibility, disclosure restoration, and full reading without
+JavaScript. Legacy inputs and invalid new fields are checked at the builder
+boundary. `npm run check:install` copied all ten skill files byte-for-byte for
+Codex and Claude Code and ran each installed builder successfully.
+
+The private trial was adapted from its previous source-backed guide. Its five
+features, nine technology entries and 21 directory descriptions cover every
+actual application and shared package in that checkout. Five Mermaid strings
+and all 68 original step references were preserved; reading and branch notes
+were shortened and separated. This is not a new blind quality evaluation or a
+live product test. Private inputs and screenshots remain outside the repository.
+
+The actual guide's overview, structure and scenario pages were inspected at
+1280px and 390px; the restored 333px user viewport also had no page overflow.
+Expanded step, branch and reading sections were checked. All five diagrams
+rendered and browser logs showed no warnings/errors. Print CSS and restoration
+were exercised in the automated browser; PDF appearance was not visually
+validated. The three README screenshots come from the committed public HTML.
+
 ## Mermaid swimlane restoration — 2026-10-08
 
 Version 0.3.0 replaces the HTML step-map with real Mermaid diagrams. Each

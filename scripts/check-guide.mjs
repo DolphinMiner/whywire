@@ -39,6 +39,61 @@ assert(noScript.includes("connect-src 'none'"), 'Diagram rendering must not requ
 assert(noScript.includes(input.scenarios[1].steps[2].detail), 'All scenario content is present without JavaScript');
 assert(noScript.includes('<details class="scenario"') && noScript.includes('<summary>'), 'Native controls work without JavaScript');
 assert(noScript.includes('id="scenario-first-read" open'), 'First scenario starts expanded');
+for (const id of ['overview', 'structure', 'scenarios']) {
+  assert(noScript.includes(`id="${id}"`) && noScript.includes(`href="#${id}"`), 'Each reading page must have a portable anchor');
+}
+
+const complete = structuredClone(input);
+const evidence = structuredClone(input.scenarios[0].steps[0].sources);
+complete.features = [{ title: 'Read an item', description: 'Retrieve the requested value.', scenario: input.scenarios[0].id }];
+complete.stack = [{ category: 'Language', name: 'Python', purpose: 'Implements the fixture.', sources: evidence }];
+complete.structureSummary = 'A compact fixture with a single read path.';
+complete.packages = [{ path: 'examples/cache-read/', name: 'Read fixture', responsibility: 'Owns the read and cache behavior.', sources: evidence }];
+complete.scenarios[0].reading = [{ title: 'Change the lookup', detail: 'Start at the read operation.', sources: evidence }];
+complete.scenarios[0].branches = [{ condition: 'The item is absent', path: 'Read the backing store.', sources: evidence }];
+const legacy = structuredClone(complete);
+for (const field of ['features', 'stack', 'structureSummary', 'packages']) delete legacy[field];
+delete legacy.scenarios[0].reading;
+const legacyHtml = renderGuide(legacy);
+assert.equal((legacyHtml.match(/class="uncovered"/g) || []).length, 3, 'Legacy inputs must label missing sections instead of inventing content');
+assert(legacyHtml.includes('Not covered in this guide.'), 'Uncovered content must be explained honestly');
+for (const field of ['features', 'stack', 'packages']) legacy[field] = [];
+assert.equal((renderGuide(legacy).match(/class="uncovered"/g) || []).length, 3, 'Empty optional sections have the same coverage boundary');
+
+const injected = '<img src=x onerror="alert(3)"></p><script>alert(4)</script>';
+const hostileSections = structuredClone(complete);
+for (const [object, fields] of [
+  [hostileSections, ['structureSummary']],
+  [hostileSections.features[0], ['title', 'description']],
+  [hostileSections.stack[0], ['category', 'name', 'purpose']],
+  [hostileSections.packages[0], ['name', 'responsibility']],
+  [hostileSections.scenarios[0].reading[0], ['title', 'detail']],
+  [hostileSections.scenarios[0].branches[0], ['condition', 'path']],
+]) for (const field of fields) object[field] = injected;
+hostileSections.packages[0].path = 'src/<img onerror="alert(5)">';
+const sectionsHtml = renderGuide(hostileSections);
+assert(!sectionsHtml.includes(injected) && sectionsHtml.includes('&lt;img src=x onerror=&quot;alert(3)&quot;&gt;'), 'Every new prose field must be escaped');
+assert(sectionsHtml.includes('src/&lt;img onerror=&quot;alert(5)&quot;&gt;'), 'Package paths must be escaped as text');
+assert.equal((sectionsHtml.match(/<script\b/g) || []).length, scripts.length, 'New sections must not create executable markup');
+for (const mutate of [
+  value => { value.features = {}; },
+  value => { value.features[0].scenario = 'not-a-real-scenario'; },
+  value => { value.stack = null; },
+  value => { value.packages = 'src'; },
+  value => { value.structureSummary = ''; },
+  value => { value.scenarios[0].reading = {}; },
+  value => { value.scenarios[0].reading[0].detail = ''; },
+  ...['stack', 'packages'].flatMap(field => [
+    value => { delete value[field][0].sources; },
+    value => { value[field][0].sources = []; },
+    value => { value[field][0].sources[0].url = 'javascript:alert(1)'; },
+  ]),
+  ...['/Users/person/project', '../src', 'C:\\src', 'src/../../lib', 'src//lib'].map(packagePath => value => { value.packages[0].path = packagePath; }),
+]) {
+  const invalid = structuredClone(complete);
+  mutate(invalid);
+  assert.throws(() => renderGuide(invalid), 'Invalid new section data must be rejected');
+}
 
 const hostile = structuredClone(input);
 hostile.title = '<img src=x onerror=alert(1)>';

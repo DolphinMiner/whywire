@@ -11,23 +11,34 @@
   English · <a href="README.zh-CN.md">简体中文</a> · <a href="https://github.com/DolphinMiner/whywire">GitHub</a> · <a href="https://github.com/DolphinMiner/whywire/actions/workflows/check.yml">Checks</a> · <a href="LICENSE">MIT</a>
 </p>
 
-New to a repository? Whywire starts with **what the product does and how people
-use it**, then traces each included scenario from the user's action to the result.
-You get **one `whywire.html`** with Mermaid diagrams, brief explanations, and
-source entry points. Open it in a browser and keep reading the code from there.
+New to a repository? Whywire explains **what the product does, how its code is
+organized, and how a request moves through it**. You get **one `whywire.html`
+with three reading pages**: Overview, Code structure, and Scenarios. Open it in
+a browser, follow the Mermaid diagrams, and continue into the referenced code.
 
 The guide embeds Mermaid 12.1.0 and its styles, so it can be read offline with
 no CDN or sibling files. Diagrams render as SVG in a compatible browser with
 JavaScript enabled; text, evidence, and diagram source remain readable without
-JavaScript. Source links still need access to their repository. The chat reply
+JavaScript, with all pages available as one document. Printing includes all
+pages. Source links still need access to their repository. The chat reply
 stays short: a summary, the HTML link, and the scope covered.
 
 ## See the output
 
-![Whywire HTML guide: a product summary, a scenario, a request flow, and code entry points.](docs/previews/guide.png)
+![Whywire Scenarios page: a Mermaid request flow with concise explanations and code entry points.](docs/previews/guide.png)
+
+<details>
+<summary>See the Overview and Code structure pages</summary>
+
+![Overview: product purpose, capabilities, and verified technology roles.](docs/previews/guide-overview.png)
+
+![Code structure: package responsibilities and places to start reading.](docs/previews/guide-structure.png)
+
+</details>
 
 Download the [HTML demo](examples/cache-read/guide.html) and open it in your
-browser. Its two sequence diagrams follow reads of the same item: the first
+browser. It opens on Overview; the navigation leads to Code structure and
+Scenarios. Its two sequence diagrams follow reads of the same item: the first
 fills the cache; the second returns the cached value without reading the origin
 again. Participants, calls, and return arrows show who does what.
 
@@ -35,16 +46,17 @@ This is a **synthetic cache-read teaching case**, showing first and repeat reads
 objects. It demonstrates the output format, not a real product or a model
 benchmark. Inspect the [source](examples/cache-read/app.py),
 [runnable assertions](examples/cache-read/app.py#L37-L41), and
-[guide input](examples/cache-read/guide.json). The screenshot is captured from
+[guide input](examples/cache-read/guide.json). The screenshots are captured from
 that HTML, not a mock interface.
 
 ## Ask from the user's point of view
 
 ```text
 Use $whywire to help a newcomer understand this repository.
-Explain what the product does, identify its main user scenarios, and trace
-the request flow for each included scenario. Save one whywire.html with
-diagrams and code entry points. State what is outside the walkthrough.
+Explain the product and its technology stack, map the major package
+responsibilities, and trace each main user scenario to its outcome.
+Save one whywire.html with Overview, Code structure, and Scenarios pages,
+Mermaid diagrams, and code entry points. State what is outside the walkthrough.
 ```
 
 Or stay focused:
@@ -56,19 +68,19 @@ Follow the request through to the visible reply and show where to read the code.
 
 A guide follows this reading order:
 
-| Read | Learn |
+| Page | Learn |
 | --- | --- |
-| Product | Who it serves, what users do, and what they get. |
-| Scenarios | The principal user actions found in the inspected product and code. |
-| Request flow | What starts each scenario, which modules handle it, how data changes, and how the result returns. |
-| Code entry points | The relevant files and functions beside the steps they explain. |
+| Overview | Who it serves, what users can do, and the verified roles of languages, frameworks, storage, and middleware. |
+| Code structure | What each major app, library, contract, or tool owns, and where to begin reading. |
+| Scenarios | How a user action crosses modules, changes data, and returns a result, with diagrams and source entry points. |
 
 Each scenario gets an authored Mermaid diagram and short explanations. Request
 flows normally use sequence diagrams, with participants, calls, returns, and
 relevant branches or asynchronous handoffs. Supporting evidence, diagram source,
-and deeper details stay available without dominating the first read. Relevant
-branches remain visible; an unexplored scenario is labeled rather
-than silently treated as covered.
+and deeper details stay available without dominating the first read. Numbered
+step explanations, conditional branches, and code-reading suggestions have
+separate roles. Package and technology claims cite inspected source; unexplored
+areas are labeled rather than silently treated as covered.
 
 Small questions can stay in chat. An explicitly requested format takes precedence.
 Debugging and change comparisons are also supported, but understanding a project
@@ -102,8 +114,9 @@ directory into your agent's skill location, including `assets/`, `scripts/`,
 [validation record](docs/validation.md) for the actual checks; an installation
 check does not prove every host's native discovery or model behavior.
 
-Rebuilding an older 0.2 JSON input now requires an authored `mermaid` field for
-every scenario. Existing HTML files remain readable. See the
+Version 0.3 JSON inputs still build; missing overview and structure content is
+labeled as uncovered. Rebuilding a 0.2 input requires an authored `mermaid`
+field for every scenario. Existing HTML files remain readable. See the
 [input and migration guide](skills/whywire/references/guide.md).
 
 ## Examples and source evidence

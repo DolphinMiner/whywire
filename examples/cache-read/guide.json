@@ -1,6 +1,6 @@
 {
   "lang": "en",
-  "title": "Read an item. Follow its path.",
+  "title": "Cache-read teaching example",
   "summary": "A caller asks for an item. This tiny cache-aside example returns its value, using a local cache to avoid reading the origin again.",
   "audience": "A developer meeting this code for the first time.",
   "revision": "Cache-read teaching fixture · app.py in this repository",
@@ -90,7 +90,25 @@
           "path": "All calls are synchronous. Origin owns the original value; the cache stores a derived copy."
         }
       ],
-      "mermaid": "sequenceDiagram\n    participant C as Caller\n    participant R as read_item\n    participant K as Cache dict\n    participant O as Origin\n    C->>R: Request item-1\n    R->>K: Look up item-1\n    K-->>R: Not cached\n    R->>O: Read item-1\n    O-->>R: blue mug\n    R->>K: Save blue mug\n    R-->>C: Return blue mug"
+      "mermaid": "sequenceDiagram\n    participant C as Caller\n    participant R as read_item\n    participant K as Cache dict\n    participant O as Origin\n    C->>R: Request item-1\n    R->>K: Look up item-1\n    K-->>R: Not cached\n    R->>O: Read item-1\n    O-->>R: blue mug\n    R->>K: Save blue mug\n    R-->>C: Return blue mug",
+      "reading": [
+        {
+          "title": "Start with the caller",
+          "detail": "Read demo, then read_item. The two successive calls show where the second request takes a different path.",
+          "sources": [
+            {
+              "file": "examples/cache-read/app.py",
+              "symbol": "demo",
+              "line": 28
+            },
+            {
+              "file": "examples/cache-read/app.py",
+              "symbol": "read_item",
+              "line": 16
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "repeat-read",
@@ -154,5 +172,73 @@
   "omitted": [
     "Missing keys, origin failures, concurrent requests, process restarts, and distributed consistency.",
     "The example makes no production freshness or latency claim. Its runnable check covers equal responses and the origin read count."
+  ],
+  "features": [
+    {
+      "title": "Read an item",
+      "description": "Fetch an item from the origin and keep a copy in memory.",
+      "scenario": "first-read"
+    },
+    {
+      "title": "Read it again",
+      "description": "Reuse the cached value without another origin read.",
+      "scenario": "repeat-read"
+    }
+  ],
+  "stack": [
+    {
+      "category": "Language & runtime",
+      "name": "Python 3 · standard library",
+      "purpose": "One synchronous script. argparse selects the demo or its assertion-based check.",
+      "sources": [
+        {
+          "file": "examples/cache-read/app.py",
+          "symbol": "argparse",
+          "line": 3
+        },
+        {
+          "file": "examples/cache-read/app.py",
+          "symbol": "__main__",
+          "line": 44
+        }
+      ]
+    },
+    {
+      "category": "Storage",
+      "name": "In-process Python objects",
+      "purpose": "A dict caches values; Origin is also an in-memory object. There is no external database, middleware, or network service in this fixture.",
+      "sources": [
+        {
+          "file": "examples/cache-read/app.py",
+          "symbol": "Origin",
+          "line": 6
+        },
+        {
+          "file": "examples/cache-read/app.py",
+          "symbol": "demo",
+          "line": 28
+        }
+      ]
+    }
+  ],
+  "structureSummary": "A single-module teaching fixture: start with the executable example, then follow either read scenario. It has no application or library package hierarchy.",
+  "packages": [
+    {
+      "path": "examples/cache-read/app.py",
+      "name": "Cache-read module",
+      "responsibility": "Origin owns the original values. read_item performs the cache lookup and fill; demo runs two reads, and check verifies the returned values and origin read count.",
+      "sources": [
+        {
+          "file": "examples/cache-read/app.py",
+          "symbol": "read_item",
+          "line": 16
+        },
+        {
+          "file": "examples/cache-read/app.py",
+          "symbol": "check",
+          "line": 37
+        }
+      ]
+    }
   ]
 }

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; font-src 'none'; connect-src 'none'; base-uri 'none'; form-action 'none'">
-<title>Read an item. Follow its path. · Whywire</title>
+<title>Cache-read teaching example · Whywire</title>
 <style>
 :root { --paper: #f7f4ec; --white: #fffefa; --ink: #152725; --muted: #53635d; --line: #d8ddd6; --accent: #a65119; --soft: #f4e5d4; }
 * { box-sizing: border-box; }
@@ -23,9 +23,32 @@ button, summary { -webkit-tap-highlight-color: transparent; }
 .tagline { color: #d2ddd7; font-size: .85rem; margin-left: 1rem; }
 .print { color: var(--paper); border: 1px solid #73857c; background: transparent; border-radius: 5px; padding: .35rem .7rem; font: inherit; font-size: .8rem; cursor: pointer; }
 .print:hover { background: #2e4540; }
-.layout { max-width: 1290px; margin: auto; padding: 2.5rem 1.5rem 4rem; display: grid; grid-template-columns: 235px minmax(0, 1fr); grid-template-areas: "sidebar overview" "sidebar content"; gap: 1.5rem 3rem; }
+.layout { max-width: 1290px; margin: auto; padding: 2.5rem 1.5rem 4rem; display: grid; grid-template-columns: 235px minmax(0, 1fr); grid-template-areas: "sidebar content"; gap: 1.5rem 3rem; }
 .sidebar { grid-area: sidebar; position: sticky; align-self: start; top: 2rem; }
-.sidebar h2 { margin: 0 0 1rem; font-size: .9rem; }
+.sidebar h2 { margin: 0 0 .75rem .8rem; font-size: .8rem; color: var(--muted); font-weight: 500; }
+[hidden] { display: none !important; }
+.scenario-nav { margin-top: .8rem !important; padding-top: .8rem !important; border-top: 1px solid var(--line); }
+.scenario-nav a { font-size: .85rem; }
+.guide-page { min-width: 0; }
+.page-heading { margin-bottom: 2rem; }
+.page-heading > p { margin-bottom: 0; }
+.page-section { margin-top: 2.5rem; }
+.page-section > h2 { font-size: 1.25rem; margin-bottom: 1rem; }
+.feature-list, .package-list { list-style: none; margin: 0; padding: 0; }
+.feature-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2rem; }
+.feature-list li { border-top: 1px solid var(--line); padding: 1rem 0 1.5rem; }
+.feature-list h3, .package-row h3 { font-size: 1rem; margin-bottom: .35rem; }
+.feature-list p { font-size: .92rem; margin-bottom: .65rem; max-width: 65ch; }
+.feature-list a { color: var(--accent); font-size: .85rem; }
+.stack-list { margin: 0; }
+.stack-row, .package-row { display: grid; grid-template-columns: minmax(160px, .8fr) minmax(0, 2fr); gap: 1rem 2rem; padding: 1.25rem 0; border-top: 1px solid var(--line); }
+.stack-row dt { color: var(--ink); font-size: 1rem; font-weight: 600; }
+.stack-row dd > p, .package-row p { margin: 0 0 .5rem; font-size: .92rem; max-width: 65ch; }
+.field-label { display: block; color: var(--muted); font-size: .75rem; font-weight: 400; margin-bottom: .4rem; }
+.package-path { color: var(--muted); font-size: .8rem; }
+.inline-sources > summary { font-size: .78rem; color: var(--muted); cursor: pointer; }
+.inline-sources .sources { margin-top: .75rem; }
+.uncovered { color: var(--muted); font-size: .9rem; }
 .sidebar ol { padding: 0; margin: 0; list-style: none; }
 .sidebar a { display: block; padding: .7rem .8rem; border-radius: 5px; margin: .2rem 0; text-decoration: none; font-size: .95rem; }
 .sidebar a:hover { background: #eaece4; }
@@ -35,7 +58,8 @@ h1, h2, h3, h4, p { margin-top: 0; }
 h1, h2, h3 { text-wrap: balance; }
 h1 { font-size: clamp(1.9rem, 3.1vw, 2.65rem); line-height: 1.2; letter-spacing: -.035em; max-width: 23ch; margin-bottom: 1rem; }
 .intro { font-size: 1.15rem; max-width: 65ch; margin-bottom: 1rem; }
-.overview { grid-area: overview; min-width: 0; }
+.overview { min-width: 0; }
+.about { margin-top: 2rem; border-top: 1px solid var(--line); padding-top: 1rem; }
 .about > summary { cursor: pointer; color: var(--muted); font-size: .85rem; }
 .orientation { margin: 1rem 0 0; display: grid; grid-template-columns: 1fr 1.5fr; gap: 1rem 1.5rem; }
 dt { color: var(--muted); font-size: .8rem; margin-bottom: .25rem; }
@@ -52,14 +76,12 @@ dd { margin: 0; }
 .scenario-summary { display: block; color: var(--muted); font-size: .9rem; margin-top: .35rem; max-width: 65ch; }
 .step-count { white-space: nowrap; font-size: .78rem; color: var(--muted); padding-top: .2rem; }
 .scenario-body { padding: 0 1.5rem 1.5rem; }
-.scenario-outcome { font-size: .87rem; border-top: 1px solid var(--line); padding-top: .8rem; margin-bottom: 0; }
-.scenario-outcome strong { font-size: .8rem; color: var(--muted); font-weight: 500; margin-right: .4rem; }
-.scenario-context { margin: 0; padding: 1rem 0; display: grid; grid-template-columns: 1fr 1.5fr; gap: 1.3rem; border-bottom: 1px solid var(--line); }
-.scenario-context dd { font-size: .87rem; }
-.flow-heading { margin: 1.5rem 0 1rem; }
-.flow-heading h3 { font-size: 1rem; margin-bottom: .2rem; }
-.flow-heading p { font-size: .8rem; color: var(--muted); margin: 0; }
- .diagram { margin: 1rem 0 1.5rem; }
+.scenario-context { margin: 0 0 1.25rem; padding: 1rem 0; display: grid; grid-template-columns: 1fr 1.5fr; gap: 1rem 2rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.scenario-context dt { font-size: .75rem; margin-bottom: .3rem; }
+.scenario-context dd { font-size: .88rem; max-width: 70ch; }
+.scenario-result { grid-column: 1 / -1; }
+.scenario-result dd { font-weight: 550; }
+.diagram { margin: 1rem 0 1.5rem; }
 .diagram-tools { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; margin-bottom: .8rem; }
 .diagram-tools[hidden] { display: none; }
 .diagram-tools button { font: inherit; font-size: .8rem; padding: .35rem .65rem; background: var(--white); border: 1px solid var(--line); border-radius: 5px; color: var(--ink); cursor: pointer; }
@@ -76,33 +98,43 @@ dd { margin: 0; }
 .renderer-license { margin-top: 1rem; }
 .renderer-license pre { white-space: pre-wrap; }
 .flow { margin: 0; padding: 0; list-style: none; }
-.step-details .flow { margin-top: 1.2rem; }
-.flow-step { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 1rem; position: relative; padding-bottom: 1.35rem; }
-.flow-step:not(:last-child)::before { content: ""; position: absolute; left: 14px; top: 30px; bottom: 0; width: 1px; background: #bc895e; }
-.flow-step:not(:first-child)::after { content: ""; position: absolute; left: 11px; top: -7px; width: 6px; height: 6px; border-right: 1px solid #bc895e; border-bottom: 1px solid #bc895e; transform: rotate(45deg); }
-.step-number { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #bc895e; background: var(--soft); color: #763809; display: grid; place-items: center; font-size: .78rem; font-variant-numeric: tabular-nums; }
-.flow-step h4 { font-size: .98rem; margin: .08rem 0 .25rem; line-height: 1.5; }
-.component { font-weight: 400; color: var(--muted); font-size: .78rem; margin-left: .5rem; overflow-wrap: anywhere; }
-.flow-step p { font-size: .9rem; margin: 0 0 .4rem; max-width: 70ch; }
-.sources { display: flex; flex-wrap: wrap; gap: .3rem 1rem; }
-.source { display: inline-flex; flex-wrap: wrap; gap: .2rem .6rem; align-items: baseline; color: var(--muted); font-size: .74rem; max-width: 100%; }
+.step-details .flow { margin-top: 1.5rem; }
+.flow-step { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 1rem; padding: 1.5rem 0; border-bottom: 1px solid var(--line); }
+.flow-step:first-child { padding-top: 0; }
+.flow-step:last-child { border-bottom: 0; padding-bottom: .5rem; }
+.step-number { width: 30px; height: 30px; border-radius: 50%; background: var(--soft); color: #763809; display: grid; place-items: center; font-size: .78rem; font-variant-numeric: tabular-nums; }
+.flow-step h4 { font-size: 1rem; margin: .08rem 0 .2rem; line-height: 1.5; }
+.flow-step .component { color: var(--muted); font-size: .78rem; margin: 0 0 .75rem; overflow-wrap: anywhere; }
+.flow-step .step-explanation { color: var(--ink); font-size: .9rem; margin: 0 0 1rem; max-width: 70ch; }
+.code-entries h5 { margin: 0 0 .5rem; font-size: .72rem; color: var(--muted); font-weight: 500; }
+.sources { display: grid; gap: .6rem; list-style: none; margin: 0; padding: 0; }
+.source { display: flex; flex-direction: column; align-items: start; gap: .15rem; font-size: .8rem; max-width: 100%; text-decoration: none; }
+a.source:hover .symbol { text-decoration: underline; }
+.source code { color: var(--muted); }
 code { font: .9em/1.5 ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; overflow-wrap: anywhere; }
-.symbol { color: var(--accent); overflow-wrap: anywhere; }
-.supplement { border-top: 1px solid var(--line); padding: .8rem 0; }
+.symbol { color: var(--accent); overflow-wrap: anywhere; font-weight: 500; }
+.supplement { border-top: 1px solid var(--line); padding: 1rem 0; }
 .supplement:last-child { padding-bottom: 0; }
-.supplement > summary, .omitted > summary { cursor: pointer; font-size: .85rem; font-weight: 600; }
-.supplement p, .omitted li { font-size: .85rem; }
-.supplement p { margin: .8rem 0; color: var(--muted); }
-.branch-list { margin: .8rem 0 0; font-size: .85rem; }
-.branch-list dt { color: var(--ink); font-size: .85rem; font-weight: 600; }
-.branch-list dd { margin-bottom: .8rem; max-width: 70ch; }
+.supplement > summary, .omitted > summary { cursor: pointer; font-size: .9rem; font-weight: 600; }
+.supplement p, .omitted li { font-size: .9rem; }
+.supplement > p { margin: .8rem 0; color: var(--muted); }
+.branch-list { margin: 1rem 0 0; }
+.branch-row { display: grid; grid-template-columns: minmax(140px, .8fr) minmax(0, 2fr); gap: 1rem 2rem; padding: 1rem 0; }
+.branch-row + .branch-row { border-top: 1px solid var(--line); }
+.branch-row dt { color: var(--ink); font-size: .9rem; font-weight: 600; }
+.branch-row dd > p { margin: 0 0 .75rem; max-width: 70ch; }
+.reading-list { margin-top: 1rem; }
+.reading-list section { padding: 1rem 0; }
+.reading-list section + section { border-top: 1px solid var(--line); }
+.reading-list h4 { font-size: .95rem; margin-bottom: .5rem; }
+.reading-list p { margin: 0 0 .75rem; max-width: 70ch; }
 pre { overflow: auto; padding: 1rem; background: var(--paper); border-radius: 5px; white-space: pre; font-size: .83rem; }
 pre code { overflow-wrap: normal; }
 .omitted { margin: 1.5rem 0; }
 .omitted ul { padding-left: 1.4rem; }
 footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem; color: var(--muted); font-size: .78rem; max-width: 80ch; }
 @media (max-width: 800px) {
-  .layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "overview" "sidebar" "content"; gap: 1.5rem; padding-top: 1.5rem; }
+  .layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "sidebar" "content"; gap: 1.5rem; padding-top: 1.5rem; }
   .sidebar { position: static; }
   .sidebar ol { display: flex; flex-wrap: wrap; gap: .3rem; }
   .sidebar a { border: 1px solid var(--line); margin: 0; font-size: .85rem; }
@@ -119,7 +151,10 @@ footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem;
   .step-count { display: none; }
   .scenario h2 { font-size: 1.15rem; }
   .flow-step { gap: .7rem; }
-  .component { display: block; margin-left: 0; }
+  .feature-list, .stack-row, .package-row, .branch-row { grid-template-columns: 1fr; }
+  .stack-row, .package-row, .branch-row { gap: .7rem; }
+  .page-heading { margin-bottom: 1.5rem; }
+  .scenario-nav { flex-direction: column; }
 
 }
 @media print {
@@ -128,9 +163,11 @@ footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem;
   .tagline { color: var(--muted); }
   .sidebar, .print, .skip, .diagram-tools, .scenario > summary::after { display: none !important; }
   .layout { display: block; padding: 1.5rem 0; max-width: none; }
+  .guide-page, .guide-page[hidden] { display: block !important; break-before: page; }
+  .guide-page:first-child { break-before: auto; }
   .overview { margin-bottom: 1.5rem; }
   .scenario { break-inside: auto; }
-  .flow-step, .scenario-context { break-inside: avoid; }
+  .flow-step, .scenario-context, .stack-row, .package-row { break-inside: avoid; }
   .scenario > summary { break-after: avoid; }
   details::details-content { content-visibility: visible !important; }
   details > :not(summary) { display: block !important; }
@@ -144,21 +181,25 @@ footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem;
 </style>
 </head>
 <body>
-<a class="skip" href="#scenarios">Skip to scenarios</a>
+<a class="skip" href="#main">Skip to content</a>
 <header class="topbar"><div><span class="brand">Whywire</span><span class="tagline">A guide through the code</span></div><button class="print" type="button" hidden>Print / save PDF</button></header>
 <div class="layout">
-<header class="overview"><h1>Read an item. Follow its path.</h1><p class="intro">A caller asks for an item. This tiny cache-aside example returns its value, using a local cache to avoid reading the origin again.</p><details class="about"><summary>About this guide</summary><dl class="orientation"><div><dt>Who this is for</dt><dd>A developer meeting this code for the first time.</dd></div><div><dt>What this guide covers</dt><dd>Two sequential reads of one unchanged item. Synthetic Python objects: no server, network, or database.</dd></div><div class="revision"><dt>Source revision</dt><dd>Cache-read teaching fixture · app.py in this repository</dd></div></dl></details></header>
-<aside class="sidebar"><nav aria-label="Choose a scenario"><h2>Choose a scenario</h2><ol><li><a href="#scenario-first-read" aria-current="location">Read an item for the first time</a></li>
-<li><a href="#scenario-repeat-read">Read the same item again</a></li></ol></nav></aside>
-<main>
-<section id="scenarios" aria-label="Choose a scenario"><details class="scenario" id="scenario-first-read" open>
+<aside class="sidebar"><nav aria-label="In this guide"><h2>In this guide</h2><ol class="page-nav"><li><a data-route href="#overview">Product overview</a></li><li><a data-route href="#structure">Code structure</a></li><li><a data-route href="#scenarios">Request scenarios</a></li></ol><ol class="scenario-nav" aria-label="Choose a scenario"><li><a data-route href="#scenario-first-read">Read an item for the first time</a></li>
+<li><a data-route href="#scenario-repeat-read">Read the same item again</a></li></ol></nav></aside>
+<main id="main" tabindex="-1">
+<section class="guide-page overview" id="overview" aria-labelledby="overview-title"><header class="page-heading"><h1 id="overview-title" tabindex="-1">Cache-read teaching example</h1><p class="intro">A caller asks for an item. This tiny cache-aside example returns its value, using a local cache to avoid reading the origin again.</p></header>
+<section class="page-section"><h2>What you can do</h2><ul class="feature-list"><li><h3>Read an item</h3><p>Fetch an item from the origin and keep a copy in memory.</p><a data-route href="#scenario-first-read">Follow this request</a></li><li><h3>Read it again</h3><p>Reuse the cached value without another origin read.</p><a data-route href="#scenario-repeat-read">Follow this request</a></li></ul></section>
+<section class="page-section"><h2>Languages & infrastructure</h2><dl class="stack-list"><div class="stack-row"><dt><span class="field-label">Language &amp; runtime</span>Python 3 · standard library</dt><dd><p>One synchronous script. argparse selects the demo or its assertion-based check.</p><details class="inline-sources"><summary>Code entry points</summary><ul class="sources"><li><span class="source"><span class="symbol">argparse</span><code>examples/cache-read/app.py:3</code></span></li><li><span class="source"><span class="symbol">__main__</span><code>examples/cache-read/app.py:44</code></span></li></ul></details></dd></div><div class="stack-row"><dt><span class="field-label">Storage</span>In-process Python objects</dt><dd><p>A dict caches values; Origin is also an in-memory object. There is no external database, middleware, or network service in this fixture.</p><details class="inline-sources"><summary>Code entry points</summary><ul class="sources"><li><span class="source"><span class="symbol">Origin</span><code>examples/cache-read/app.py:6</code></span></li><li><span class="source"><span class="symbol">demo</span><code>examples/cache-read/app.py:28</code></span></li></ul></details></dd></div></dl></section>
+<details class="about"><summary>About this guide</summary><dl class="orientation"><div><dt>Who this is for</dt><dd>A developer meeting this code for the first time.</dd></div><div><dt>What this guide covers</dt><dd>Two sequential reads of one unchanged item. Synthetic Python objects: no server, network, or database.</dd></div><div class="revision"><dt>Source revision</dt><dd>Cache-read teaching fixture · app.py in this repository</dd></div></dl></details><details class="omitted"><summary>Outside this guide</summary><ul><li>Missing keys, origin failures, concurrent requests, process restarts, and distributed consistency.</li><li>The example makes no production freshness or latency claim. Its runnable check covers equal responses and the origin read count.</li></ul></details></section>
+<section class="guide-page" id="structure" aria-labelledby="structure-title"><header class="page-heading"><h1 id="structure-title" tabindex="-1">Code structure</h1><p class="intro">A single-module teaching fixture: start with the executable example, then follow either read scenario. It has no application or library package hierarchy.</p></header><section class="page-section"><h2>Packages & responsibilities</h2><ul class="package-list"><li class="package-row"><div><h3>Cache-read module</h3><code class="package-path">examples/cache-read/app.py</code></div><div><p>Origin owns the original values. read_item performs the cache lookup and fill; demo runs two reads, and check verifies the returned values and origin read count.</p><details class="inline-sources"><summary>Code entry points</summary><ul class="sources"><li><span class="source"><span class="symbol">read_item</span><code>examples/cache-read/app.py:16</code></span></li><li><span class="source"><span class="symbol">check</span><code>examples/cache-read/app.py:37</code></span></li></ul></details></div></li></ul></section></section>
+<section class="guide-page" id="scenarios" aria-labelledby="scenarios-title"><header class="page-heading"><h1 id="scenarios-title" tabindex="-1">Request scenarios</h1></header><details class="scenario" id="scenario-first-read" open>
       <summary><span><h2>Read an item for the first time</h2><span class="scenario-summary">The empty cache sends this read to the origin; the result is saved for next time.</span></span><span class="step-count">5 steps</span></summary>
-      <div class="scenario-body"><p class="scenario-outcome"><strong>What they get</strong> The caller gets blue mug; the cache now holds the same value.</p>
-      <div class="flow-heading"><h3>Follow the request</h3><p>A source-based path. Branches and timing are noted below.</p></div><div class="diagram" data-error="Diagram could not render. Check the Mermaid source below."><div class="diagram-tools" hidden><button type="button" data-size="fit" aria-pressed="true">Fit to width</button><button type="button" data-size="actual" aria-pressed="false">Actual size</button><span>Use actual size and scroll to read a wide diagram.</span></div><p class="diagram-status" role="status" hidden>Rendering diagram…</p><div class="diagram-viewport" tabindex="0" role="region" aria-label="Read an item for the first time"><div class="diagram-svg"></div></div><noscript><p>Enable JavaScript to render the diagram. Its source and step explanations are available below.</p></noscript></div><details class="supplement step-details"><summary>Step explanations & code entry points</summary><dl class="scenario-context"><div><dt>Who acts</dt><dd>A caller requesting item-1</dd></div><div><dt>Starts with</dt><dd>demo() calls read_item with an empty cache.</dd></div></dl><ol class="flow"><li class="flow-step"><span class="step-number" aria-hidden="true">1</span><div><h4>Ask for item-1 <span class="component">Caller · demo</span></h4><p>Create a cache and an origin, then pass both to the read function.</p><div class="sources"><span class="source"><code>examples/cache-read/app.py:28</code><span class="symbol">demo</span></span></div></div></li>
-<li class="flow-step"><span class="step-number" aria-hidden="true">2</span><div><h4>Look in the cache <span class="component">read_item</span></h4><p>The key is absent, so this request continues past the early-return branch.</p><div class="sources"><span class="source"><code>examples/cache-read/app.py:17</code><span class="symbol">read_item</span></span></div></div></li>
-<li class="flow-step"><span class="step-number" aria-hidden="true">3</span><div><h4>Read the original value <span class="component">Origin.read</span></h4><p>The origin returns blue mug and increments its read counter.</p><div class="sources"><span class="source"><code>examples/cache-read/app.py:11</code><span class="symbol">Origin.read</span></span><span class="source"><code>examples/cache-read/app.py:21</code><span class="symbol">read_item</span></span></div></div></li>
-<li class="flow-step"><span class="step-number" aria-hidden="true">4</span><div><h4>Keep a copy for the next read <span class="component">Cache dict</span></h4><p>read_item stores the returned value under item-1 before responding.</p><div class="sources"><span class="source"><code>examples/cache-read/app.py:23</code><span class="symbol">read_item</span></span></div></div></li>
-<li class="flow-step"><span class="step-number" aria-hidden="true">5</span><div><h4>Return blue mug <span class="component">read_item → caller</span></h4><p>The function returns the value directly; no later delivery step is involved.</p><div class="sources"><span class="source"><code>examples/cache-read/app.py:25</code><span class="symbol">read_item</span></span></div></div></li></ol></details><details class="supplement"><summary>Branches & timing</summary><dl class="branch-list"><dt>If the key is already cached</dt><dd>read_item returns at line 19. It skips both the origin read and the cache write; see the second scenario.</dd><dt>Ordering in this example</dt><dd>All calls are synchronous. Origin owns the original value; the cache stores a derived copy.</dd></dl></details><details class="supplement diagram-source"><summary>View Mermaid source</summary><p>Editable Mermaid source for this scenario.</p><pre><code>sequenceDiagram
+      <div class="scenario-body"><dl class="scenario-context"><div><dt>Who acts</dt><dd>A caller requesting item-1</dd></div><div><dt>Starts with</dt><dd>demo() calls read_item with an empty cache.</dd></div><div class="scenario-result"><dt>What they get</dt><dd>The caller gets blue mug; the cache now holds the same value.</dd></div></dl>
+      <div class="diagram" data-error="Diagram could not render. Check the Mermaid source below."><div class="diagram-tools" hidden><button type="button" data-size="fit" aria-pressed="true">Fit to width</button><button type="button" data-size="actual" aria-pressed="false">Actual size</button><span>Use actual size and scroll to read a wide diagram.</span></div><p class="diagram-status" role="status" hidden>Rendering diagram…</p><div class="diagram-viewport" tabindex="0" role="region" aria-label="Read an item for the first time"><div class="diagram-svg"></div></div><noscript><p>Enable JavaScript to render the diagram. Its source and step explanations are available below.</p></noscript></div><details class="supplement step-details"><summary>Step explanations & code entry points</summary><ol class="flow"><li class="flow-step"><span class="step-number" aria-hidden="true">1</span><div><h4>Ask for item-1</h4><p class="component">Caller · demo</p><p class="step-explanation">Create a cache and an origin, then pass both to the read function.</p><div class="code-entries"><h5>Code entry points</h5><ul class="sources"><li><span class="source"><span class="symbol">demo</span><code>examples/cache-read/app.py:28</code></span></li></ul></div></div></li>
+<li class="flow-step"><span class="step-number" aria-hidden="true">2</span><div><h4>Look in the cache</h4><p class="component">read_item</p><p class="step-explanation">The key is absent, so this request continues past the early-return branch.</p><div class="code-entries"><h5>Code entry points</h5><ul class="sources"><li><span class="source"><span class="symbol">read_item</span><code>examples/cache-read/app.py:17</code></span></li></ul></div></div></li>
+<li class="flow-step"><span class="step-number" aria-hidden="true">3</span><div><h4>Read the original value</h4><p class="component">Origin.read</p><p class="step-explanation">The origin returns blue mug and increments its read counter.</p><div class="code-entries"><h5>Code entry points</h5><ul class="sources"><li><span class="source"><span class="symbol">Origin.read</span><code>examples/cache-read/app.py:11</code></span></li><li><span class="source"><span class="symbol">read_item</span><code>examples/cache-read/app.py:21</code></span></li></ul></div></div></li>
+<li class="flow-step"><span class="step-number" aria-hidden="true">4</span><div><h4>Keep a copy for the next read</h4><p class="component">Cache dict</p><p class="step-explanation">read_item stores the returned value under item-1 before responding.</p><div class="code-entries"><h5>Code entry points</h5><ul class="sources"><li><span class="source"><span class="symbol">read_item</span><code>examples/cache-read/app.py:23</code></span></li></ul></div></div></li>
+<li class="flow-step"><span class="step-number" aria-hidden="true">5</span><div><h4>Return blue mug</h4><p class="component">read_item → caller</p><p class="step-explanation">The function returns the value directly; no later delivery step is involved.</p><div class="code-entries"><h5>Code entry points</h5><ul class="sources"><li><span class="source"><span class="symbol">read_item</span><code>examples/cache-read/app.py:25</code></span></li></ul></div></div></li></ol></details><details class="supplement"><summary>Branches & timing</summary><dl class="branch-list"><div class="branch-row"><dt><span class="field-label">When</span>If the key is already cached</dt><dd><span class="field-label">What happens</span><p>read_item returns at line 19. It skips both the origin read and the cache write; see the second scenario.</p></dd></div><div class="branch-row"><dt><span class="field-label">When</span>Ordering in this example</dt><dd><span class="field-label">What happens</span><p>All calls are synchronous. Origin owns the original value; the cache stores a derived copy.</p></dd></div></dl></details><details class="supplement reading-notes"><summary>Where to read next</summary><div class="reading-list"><section><h4>Start with the caller</h4><p>Read demo, then read_item. The two successive calls show where the second request takes a different path.</p><ul class="sources"><li><span class="source"><span class="symbol">demo</span><code>examples/cache-read/app.py:28</code></span></li><li><span class="source"><span class="symbol">read_item</span><code>examples/cache-read/app.py:16</code></span></li></ul></section></div></details><details class="supplement diagram-source"><summary>View Mermaid source</summary><p>Editable Mermaid source for this scenario.</p><pre><code>sequenceDiagram
     participant C as Caller
     participant R as read_item
     participant K as Cache dict
@@ -172,10 +213,10 @@ footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem;
     R--&gt;&gt;C: Return blue mug</code></pre></details></div></details>
 <details class="scenario" id="scenario-repeat-read">
       <summary><span><h2>Read the same item again</h2><span class="scenario-summary">The stored copy answers this request; the origin is not called a second time.</span></span><span class="step-count">3 steps</span></summary>
-      <div class="scenario-body"><p class="scenario-outcome"><strong>What they get</strong> The caller gets blue mug again; the origin read count stays at one.</p>
-      <div class="flow-heading"><h3>Follow the request</h3><p>A source-based path. Branches and timing are noted below.</p></div><div class="diagram" data-error="Diagram could not render. Check the Mermaid source below."><div class="diagram-tools" hidden><button type="button" data-size="fit" aria-pressed="true">Fit to width</button><button type="button" data-size="actual" aria-pressed="false">Actual size</button><span>Use actual size and scroll to read a wide diagram.</span></div><p class="diagram-status" role="status" hidden>Rendering diagram…</p><div class="diagram-viewport" tabindex="0" role="region" aria-label="Read the same item again"><div class="diagram-svg"></div></div><noscript><p>Enable JavaScript to render the diagram. Its source and step explanations are available below.</p></noscript></div><details class="supplement step-details"><summary>Step explanations & code entry points</summary><dl class="scenario-context"><div><dt>Who acts</dt><dd>The same caller requesting item-1</dd></div><div><dt>Starts with</dt><dd>demo() makes a second call with the same cache and origin.</dd></div></dl><ol class="flow"><li class="flow-step"><span class="step-number" aria-hidden="true">1</span><div><h4>Request item-1 again <span class="component">Caller · demo</span></h4><p>The second call reuses the objects from the first call, including its cached value.</p><div class="sources"><span class="source"><code>examples/cache-read/app.py:32</code><span class="symbol">demo</span></span></div></div></li>
-<li class="flow-step"><span class="step-number" aria-hidden="true">2</span><div><h4>Find the stored value <span class="component">read_item</span></h4><p>The key is present, so the function takes the cache-hit branch.</p><div class="sources"><span class="source"><code>examples/cache-read/app.py:17</code><span class="symbol">read_item</span></span></div></div></li>
-<li class="flow-step"><span class="step-number" aria-hidden="true">3</span><div><h4>Return directly from the cache <span class="component">Cache dict → caller</span></h4><p>The early return avoids the origin call below it. check() asserts equal responses and one origin read.</p><div class="sources"><span class="source"><code>examples/cache-read/app.py:19</code><span class="symbol">read_item</span></span><span class="source"><code>examples/cache-read/app.py:37</code><span class="symbol">check</span></span></div></div></li></ol></details><details class="supplement"><summary>Branches & timing</summary><dl class="branch-list"><dt>If the origin changes</dt><dd>An existing cache entry is not refreshed. This fixture contains no invalidation or expiry policy.</dd></dl></details><details class="supplement diagram-source"><summary>View Mermaid source</summary><p>Editable Mermaid source for this scenario.</p><pre><code>sequenceDiagram
+      <div class="scenario-body"><dl class="scenario-context"><div><dt>Who acts</dt><dd>The same caller requesting item-1</dd></div><div><dt>Starts with</dt><dd>demo() makes a second call with the same cache and origin.</dd></div><div class="scenario-result"><dt>What they get</dt><dd>The caller gets blue mug again; the origin read count stays at one.</dd></div></dl>
+      <div class="diagram" data-error="Diagram could not render. Check the Mermaid source below."><div class="diagram-tools" hidden><button type="button" data-size="fit" aria-pressed="true">Fit to width</button><button type="button" data-size="actual" aria-pressed="false">Actual size</button><span>Use actual size and scroll to read a wide diagram.</span></div><p class="diagram-status" role="status" hidden>Rendering diagram…</p><div class="diagram-viewport" tabindex="0" role="region" aria-label="Read the same item again"><div class="diagram-svg"></div></div><noscript><p>Enable JavaScript to render the diagram. Its source and step explanations are available below.</p></noscript></div><details class="supplement step-details"><summary>Step explanations & code entry points</summary><ol class="flow"><li class="flow-step"><span class="step-number" aria-hidden="true">1</span><div><h4>Request item-1 again</h4><p class="component">Caller · demo</p><p class="step-explanation">The second call reuses the objects from the first call, including its cached value.</p><div class="code-entries"><h5>Code entry points</h5><ul class="sources"><li><span class="source"><span class="symbol">demo</span><code>examples/cache-read/app.py:32</code></span></li></ul></div></div></li>
+<li class="flow-step"><span class="step-number" aria-hidden="true">2</span><div><h4>Find the stored value</h4><p class="component">read_item</p><p class="step-explanation">The key is present, so the function takes the cache-hit branch.</p><div class="code-entries"><h5>Code entry points</h5><ul class="sources"><li><span class="source"><span class="symbol">read_item</span><code>examples/cache-read/app.py:17</code></span></li></ul></div></div></li>
+<li class="flow-step"><span class="step-number" aria-hidden="true">3</span><div><h4>Return directly from the cache</h4><p class="component">Cache dict → caller</p><p class="step-explanation">The early return avoids the origin call below it. check() asserts equal responses and one origin read.</p><div class="code-entries"><h5>Code entry points</h5><ul class="sources"><li><span class="source"><span class="symbol">read_item</span><code>examples/cache-read/app.py:19</code></span></li><li><span class="source"><span class="symbol">check</span><code>examples/cache-read/app.py:37</code></span></li></ul></div></div></li></ol></details><details class="supplement"><summary>Branches & timing</summary><dl class="branch-list"><div class="branch-row"><dt><span class="field-label">When</span>If the origin changes</dt><dd><span class="field-label">What happens</span><p>An existing cache entry is not refreshed. This fixture contains no invalidation or expiry policy.</p></dd></div></dl></details><details class="supplement diagram-source"><summary>View Mermaid source</summary><p>Editable Mermaid source for this scenario.</p><pre><code>sequenceDiagram
     participant C as Caller
     participant R as read_item
     participant K as Cache dict
@@ -185,7 +226,6 @@ footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem;
     K--&gt;&gt;R: blue mug
     Note over R,O: Cache hit returns without calling Origin
     R--&gt;&gt;C: Return blue mug</code></pre></details></div></details></section>
-<details class="omitted"><summary>Outside this guide</summary><ul><li>Missing keys, origin failures, concurrent requests, process restarts, and distributed consistency.</li><li>The example makes no production freshness or latency claim. Its runnable check covers equal responses and the origin read count.</li></ul></details>
 <footer>Based on inspected source, not a recorded runtime trace. Source references remain readable offline; web links need a connection.<details class="renderer-license"><summary>Mermaid license</summary><pre>The MIT License (MIT)
 
 Copyright (c) 2014 - 2022 Knut Sveidqvist
@@ -4541,22 +4581,33 @@ globalThis["mermaid"] = globalThis.__esbuild_esm_mermaid_nm["mermaid"].default;
 </script>
 <script id="guide-interactions">
 const scenarios = [...document.querySelectorAll('.scenario')];
+const pages = [...document.querySelectorAll('.guide-page')];
 const links = [...document.querySelectorAll('nav a')];
-function selectScenario(id) {
+function selectView(id) {
   if (typeof id !== 'string') {
-    try { id = decodeURIComponent(location.hash.slice(1)); } catch { return; }
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch { id = ''; }
   }
   const selected = scenarios.find(scenario => scenario.id === id);
-  if (!selected) return;
-  for (const scenario of scenarios) scenario.open = scenario === selected;
+  const page = pages.find(page => page.id === (selected ? 'scenarios' : id)) ?? pages[0];
+  for (const item of pages) item.hidden = item !== page;
+  document.querySelector('.scenario-nav').hidden = page.id !== 'scenarios';
+  if (selected) for (const scenario of scenarios) scenario.open = scenario === selected;
+  else if (page.id === 'scenarios' && !scenarios.some(scenario => scenario.open)) scenarios[0].open = true;
   for (const link of links) {
-    if (link.hash === '#' + selected.id) link.setAttribute('aria-current', 'location');
+    if (link.hash === '#' + page.id || selected && link.hash === '#' + selected.id) link.setAttribute('aria-current', 'location');
     else link.removeAttribute('aria-current');
   }
+  return selected ?? page;
 }
-for (const link of links) link.addEventListener('click', () => selectScenario(link.hash.slice(1)));
-window.addEventListener('hashchange', selectScenario);
-selectScenario();
+for (const link of document.querySelectorAll('[data-route]')) link.addEventListener('click', () => selectView(link.hash.slice(1)));
+window.addEventListener('hashchange', () => {
+  if (location.hash === '#main') return;
+  const target = selectView();
+  const heading = target.querySelector('h1, summary');
+  heading?.focus({ preventScroll: true });
+  target.scrollIntoView();
+});
+selectView();
 const diagrams = [...document.querySelectorAll('.diagram')];
 // Render into Mermaid's visible body staging area, including closed scenarios.
 // This preserves text measurements and prepares every diagram for printing.

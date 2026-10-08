@@ -84,7 +84,9 @@ and diagram viewports. Diagram signals use `ink`.
 ## Typography
 
 Use the system sans-serif stack for prose and the system monospace stack for
-source paths and code. Mermaid uses Arial with a sans-serif fallback. All work
+source paths and code. Present a source's function or symbol before its quieter
+path, so the reader can choose an entry point before parsing a long filename.
+Mermaid uses Arial with a sans-serif fallback. All work
 offline without font downloads. The display role titles the guide; the headline
 role names scenarios. Mermaid participant and message labels remain readable
 at their rendered size. Introduction and summary lines stay within 65ch;
@@ -92,10 +94,16 @@ detailed explanations stay within 70ch.
 
 ## Layout
 
-The desktop page has a 1290px maximum width, a 235px sticky scenario rail, and a
-flexible reading column. At 800px and below, the rail becomes wrapping navigation
-below the introduction. At 520px and below, page padding narrows, scenario
-metadata stacks, and secondary masthead text and step counts are hidden.
+Use a stable desktop navigation rail and one flexible reading panel. Its primary
+links are Overview, Code structure, and Scenarios, with scenario links grouped
+beneath Scenarios. The default panel is Overview. Each page and scenario has an
+ordinary hash link; navigation and browser history determine the visible panel.
+Keep product introduction and stack on Overview, package responsibilities on
+Code structure, and request diagrams with their explanations on Scenarios.
+
+On narrow screens, navigation returns to the document flow, labels wrap, and
+metadata stacks. Text and source paths must wrap without causing page overflow;
+only a diagram viewport may need horizontal scrolling.
 
 **The Readable Path Rule.** Each scenario renders its authored Mermaid as SVG,
 normally a sequence diagram with participant lifelines, calls, and returns.
@@ -114,33 +122,47 @@ separation. Keep this flat reading treatment when extending the guide.
 ## Shapes
 
 Scenario containers use the larger radius; controls, navigation, diagram viewports,
-and code blocks use the compact radius. Expanded evidence has circular numbered
-markers connected by thin arrows. Containers and separators use 1px borders.
+and code blocks use the compact radius. Step explanations use numbered rows
+without connecting arrows: the Mermaid diagram owns call and timing semantics.
+Containers and separators use 1px borders.
 
 ## Components
 
 - **Print button:** a small outlined control in the masthead. Its hover surface
   becomes lighter green. It appears when JavaScript is available; printing
   expands disclosures and restores their prior states afterward.
-- **Scenario navigation:** ordinary anchor links with a filled current state.
-  Selecting a scenario opens it and closes other scenarios. On small screens,
-  links wrap and gain borders; they remain navigation links.
+- **Guide navigation:** stable Overview, Code structure, and Scenarios anchor
+  links, with indented scenario choices and a clear current state. Selecting a
+  scenario reveals the Scenarios page, opens it, and closes the other scenarios.
+  On small screens the links wrap in the normal document flow.
+- **Overview:** a product introduction followed by capabilities and technology
+  roles. Features may link to their relevant scenario. Keep source evidence
+  attached to stack claims, and label unexamined content honestly.
+- **Code structure:** a short orientation followed by major package paths,
+  responsibilities, and source entry points. This is a reading map, not a file
+  browser or a recursive directory dump.
 - **Scenario disclosure:** a native `details` section with a title, short summary,
-  step count, and plus/minus indicator. The first scenario starts open. Its
-  visible body leads with the outcome and diagram.
+  step count, and plus/minus indicator. The first scenario starts open within
+  its page. Its body states the outcome and leads directly into the diagram;
+  avoid repeating explanatory headings and generic instructions.
 - **Flow diagram:** the scenario's required Mermaid source renders as SVG using
   the pinned runtime embedded in the HTML. Fit to width / Actual size controls
   preserve legibility across viewports. The source remains in a folded disclosure;
   rendering errors are visible and reveal that source.
 - **Evidence disclosure:** native `details` contains step explanations and code
-  entry points; branches and timing use a separate folded section. Source paths
-  and symbols remain readable offline, whether or not a web URL is available.
+  entry points. Each numbered row groups an operation, responsible component,
+  concise explanation, and symbol-first source references.
+- **Branches and reading:** actual alternatives and timing use condition/result
+  rows in their own folded section, with distinct columns on wide screens and
+  stacked labels on narrow screens. Code-reading suggestions and source caveats
+  have a separate section; they do not masquerade as branches. Source paths and
+  symbols remain readable offline, whether or not a web URL is available.
 
 All interactive elements retain a visible accent focus outline (3px with a 4px
 offset). Preserve native keyboard behavior and the focus-revealed skip link.
-Print hides navigation and controls and exposes the complete reading content.
-Diagrams require JavaScript; text, source references, and native disclosures
-remain available without it.
+Print hides navigation and controls, exposes all three pages and disclosures,
+then restores the prior reading state. Diagrams require JavaScript; without it,
+all pages' text, source references, and native disclosures remain in the document.
 
 ## Do's and Don'ts
 

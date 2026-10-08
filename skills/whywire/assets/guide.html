@@ -23,9 +23,32 @@ button, summary { -webkit-tap-highlight-color: transparent; }
 .tagline { color: #d2ddd7; font-size: .85rem; margin-left: 1rem; }
 .print { color: var(--paper); border: 1px solid #73857c; background: transparent; border-radius: 5px; padding: .35rem .7rem; font: inherit; font-size: .8rem; cursor: pointer; }
 .print:hover { background: #2e4540; }
-.layout { max-width: 1290px; margin: auto; padding: 2.5rem 1.5rem 4rem; display: grid; grid-template-columns: 235px minmax(0, 1fr); grid-template-areas: "sidebar overview" "sidebar content"; gap: 1.5rem 3rem; }
+.layout { max-width: 1290px; margin: auto; padding: 2.5rem 1.5rem 4rem; display: grid; grid-template-columns: 235px minmax(0, 1fr); grid-template-areas: "sidebar content"; gap: 1.5rem 3rem; }
 .sidebar { grid-area: sidebar; position: sticky; align-self: start; top: 2rem; }
-.sidebar h2 { margin: 0 0 1rem; font-size: .9rem; }
+.sidebar h2 { margin: 0 0 .75rem .8rem; font-size: .8rem; color: var(--muted); font-weight: 500; }
+[hidden] { display: none !important; }
+.scenario-nav { margin-top: .8rem !important; padding-top: .8rem !important; border-top: 1px solid var(--line); }
+.scenario-nav a { font-size: .85rem; }
+.guide-page { min-width: 0; }
+.page-heading { margin-bottom: 2rem; }
+.page-heading > p { margin-bottom: 0; }
+.page-section { margin-top: 2.5rem; }
+.page-section > h2 { font-size: 1.25rem; margin-bottom: 1rem; }
+.feature-list, .package-list { list-style: none; margin: 0; padding: 0; }
+.feature-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2rem; }
+.feature-list li { border-top: 1px solid var(--line); padding: 1rem 0 1.5rem; }
+.feature-list h3, .package-row h3 { font-size: 1rem; margin-bottom: .35rem; }
+.feature-list p { font-size: .92rem; margin-bottom: .65rem; max-width: 65ch; }
+.feature-list a { color: var(--accent); font-size: .85rem; }
+.stack-list { margin: 0; }
+.stack-row, .package-row { display: grid; grid-template-columns: minmax(160px, .8fr) minmax(0, 2fr); gap: 1rem 2rem; padding: 1.25rem 0; border-top: 1px solid var(--line); }
+.stack-row dt { color: var(--ink); font-size: 1rem; font-weight: 600; }
+.stack-row dd > p, .package-row p { margin: 0 0 .5rem; font-size: .92rem; max-width: 65ch; }
+.field-label { display: block; color: var(--muted); font-size: .75rem; font-weight: 400; margin-bottom: .4rem; }
+.package-path { color: var(--muted); font-size: .8rem; }
+.inline-sources > summary { font-size: .78rem; color: var(--muted); cursor: pointer; }
+.inline-sources .sources { margin-top: .75rem; }
+.uncovered { color: var(--muted); font-size: .9rem; }
 .sidebar ol { padding: 0; margin: 0; list-style: none; }
 .sidebar a { display: block; padding: .7rem .8rem; border-radius: 5px; margin: .2rem 0; text-decoration: none; font-size: .95rem; }
 .sidebar a:hover { background: #eaece4; }
@@ -35,7 +58,8 @@ h1, h2, h3, h4, p { margin-top: 0; }
 h1, h2, h3 { text-wrap: balance; }
 h1 { font-size: clamp(1.9rem, 3.1vw, 2.65rem); line-height: 1.2; letter-spacing: -.035em; max-width: 23ch; margin-bottom: 1rem; }
 .intro { font-size: 1.15rem; max-width: 65ch; margin-bottom: 1rem; }
-.overview { grid-area: overview; min-width: 0; }
+.overview { min-width: 0; }
+.about { margin-top: 2rem; border-top: 1px solid var(--line); padding-top: 1rem; }
 .about > summary { cursor: pointer; color: var(--muted); font-size: .85rem; }
 .orientation { margin: 1rem 0 0; display: grid; grid-template-columns: 1fr 1.5fr; gap: 1rem 1.5rem; }
 dt { color: var(--muted); font-size: .8rem; margin-bottom: .25rem; }
@@ -52,14 +76,12 @@ dd { margin: 0; }
 .scenario-summary { display: block; color: var(--muted); font-size: .9rem; margin-top: .35rem; max-width: 65ch; }
 .step-count { white-space: nowrap; font-size: .78rem; color: var(--muted); padding-top: .2rem; }
 .scenario-body { padding: 0 1.5rem 1.5rem; }
-.scenario-outcome { font-size: .87rem; border-top: 1px solid var(--line); padding-top: .8rem; margin-bottom: 0; }
-.scenario-outcome strong { font-size: .8rem; color: var(--muted); font-weight: 500; margin-right: .4rem; }
-.scenario-context { margin: 0; padding: 1rem 0; display: grid; grid-template-columns: 1fr 1.5fr; gap: 1.3rem; border-bottom: 1px solid var(--line); }
-.scenario-context dd { font-size: .87rem; }
-.flow-heading { margin: 1.5rem 0 1rem; }
-.flow-heading h3 { font-size: 1rem; margin-bottom: .2rem; }
-.flow-heading p { font-size: .8rem; color: var(--muted); margin: 0; }
- .diagram { margin: 1rem 0 1.5rem; }
+.scenario-context { margin: 0 0 1.25rem; padding: 1rem 0; display: grid; grid-template-columns: 1fr 1.5fr; gap: 1rem 2rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.scenario-context dt { font-size: .75rem; margin-bottom: .3rem; }
+.scenario-context dd { font-size: .88rem; max-width: 70ch; }
+.scenario-result { grid-column: 1 / -1; }
+.scenario-result dd { font-weight: 550; }
+.diagram { margin: 1rem 0 1.5rem; }
 .diagram-tools { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; margin-bottom: .8rem; }
 .diagram-tools[hidden] { display: none; }
 .diagram-tools button { font: inherit; font-size: .8rem; padding: .35rem .65rem; background: var(--white); border: 1px solid var(--line); border-radius: 5px; color: var(--ink); cursor: pointer; }
@@ -76,33 +98,43 @@ dd { margin: 0; }
 .renderer-license { margin-top: 1rem; }
 .renderer-license pre { white-space: pre-wrap; }
 .flow { margin: 0; padding: 0; list-style: none; }
-.step-details .flow { margin-top: 1.2rem; }
-.flow-step { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 1rem; position: relative; padding-bottom: 1.35rem; }
-.flow-step:not(:last-child)::before { content: ""; position: absolute; left: 14px; top: 30px; bottom: 0; width: 1px; background: #bc895e; }
-.flow-step:not(:first-child)::after { content: ""; position: absolute; left: 11px; top: -7px; width: 6px; height: 6px; border-right: 1px solid #bc895e; border-bottom: 1px solid #bc895e; transform: rotate(45deg); }
-.step-number { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #bc895e; background: var(--soft); color: #763809; display: grid; place-items: center; font-size: .78rem; font-variant-numeric: tabular-nums; }
-.flow-step h4 { font-size: .98rem; margin: .08rem 0 .25rem; line-height: 1.5; }
-.component { font-weight: 400; color: var(--muted); font-size: .78rem; margin-left: .5rem; overflow-wrap: anywhere; }
-.flow-step p { font-size: .9rem; margin: 0 0 .4rem; max-width: 70ch; }
-.sources { display: flex; flex-wrap: wrap; gap: .3rem 1rem; }
-.source { display: inline-flex; flex-wrap: wrap; gap: .2rem .6rem; align-items: baseline; color: var(--muted); font-size: .74rem; max-width: 100%; }
+.step-details .flow { margin-top: 1.5rem; }
+.flow-step { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 1rem; padding: 1.5rem 0; border-bottom: 1px solid var(--line); }
+.flow-step:first-child { padding-top: 0; }
+.flow-step:last-child { border-bottom: 0; padding-bottom: .5rem; }
+.step-number { width: 30px; height: 30px; border-radius: 50%; background: var(--soft); color: #763809; display: grid; place-items: center; font-size: .78rem; font-variant-numeric: tabular-nums; }
+.flow-step h4 { font-size: 1rem; margin: .08rem 0 .2rem; line-height: 1.5; }
+.flow-step .component { color: var(--muted); font-size: .78rem; margin: 0 0 .75rem; overflow-wrap: anywhere; }
+.flow-step .step-explanation { color: var(--ink); font-size: .9rem; margin: 0 0 1rem; max-width: 70ch; }
+.code-entries h5 { margin: 0 0 .5rem; font-size: .72rem; color: var(--muted); font-weight: 500; }
+.sources { display: grid; gap: .6rem; list-style: none; margin: 0; padding: 0; }
+.source { display: flex; flex-direction: column; align-items: start; gap: .15rem; font-size: .8rem; max-width: 100%; text-decoration: none; }
+a.source:hover .symbol { text-decoration: underline; }
+.source code { color: var(--muted); }
 code { font: .9em/1.5 ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; overflow-wrap: anywhere; }
-.symbol { color: var(--accent); overflow-wrap: anywhere; }
-.supplement { border-top: 1px solid var(--line); padding: .8rem 0; }
+.symbol { color: var(--accent); overflow-wrap: anywhere; font-weight: 500; }
+.supplement { border-top: 1px solid var(--line); padding: 1rem 0; }
 .supplement:last-child { padding-bottom: 0; }
-.supplement > summary, .omitted > summary { cursor: pointer; font-size: .85rem; font-weight: 600; }
-.supplement p, .omitted li { font-size: .85rem; }
-.supplement p { margin: .8rem 0; color: var(--muted); }
-.branch-list { margin: .8rem 0 0; font-size: .85rem; }
-.branch-list dt { color: var(--ink); font-size: .85rem; font-weight: 600; }
-.branch-list dd { margin-bottom: .8rem; max-width: 70ch; }
+.supplement > summary, .omitted > summary { cursor: pointer; font-size: .9rem; font-weight: 600; }
+.supplement p, .omitted li { font-size: .9rem; }
+.supplement > p { margin: .8rem 0; color: var(--muted); }
+.branch-list { margin: 1rem 0 0; }
+.branch-row { display: grid; grid-template-columns: minmax(140px, .8fr) minmax(0, 2fr); gap: 1rem 2rem; padding: 1rem 0; }
+.branch-row + .branch-row { border-top: 1px solid var(--line); }
+.branch-row dt { color: var(--ink); font-size: .9rem; font-weight: 600; }
+.branch-row dd > p { margin: 0 0 .75rem; max-width: 70ch; }
+.reading-list { margin-top: 1rem; }
+.reading-list section { padding: 1rem 0; }
+.reading-list section + section { border-top: 1px solid var(--line); }
+.reading-list h4 { font-size: .95rem; margin-bottom: .5rem; }
+.reading-list p { margin: 0 0 .75rem; max-width: 70ch; }
 pre { overflow: auto; padding: 1rem; background: var(--paper); border-radius: 5px; white-space: pre; font-size: .83rem; }
 pre code { overflow-wrap: normal; }
 .omitted { margin: 1.5rem 0; }
 .omitted ul { padding-left: 1.4rem; }
 footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem; color: var(--muted); font-size: .78rem; max-width: 80ch; }
 @media (max-width: 800px) {
-  .layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "overview" "sidebar" "content"; gap: 1.5rem; padding-top: 1.5rem; }
+  .layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "sidebar" "content"; gap: 1.5rem; padding-top: 1.5rem; }
   .sidebar { position: static; }
   .sidebar ol { display: flex; flex-wrap: wrap; gap: .3rem; }
   .sidebar a { border: 1px solid var(--line); margin: 0; font-size: .85rem; }
@@ -119,7 +151,10 @@ footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem;
   .step-count { display: none; }
   .scenario h2 { font-size: 1.15rem; }
   .flow-step { gap: .7rem; }
-  .component { display: block; margin-left: 0; }
+  .feature-list, .stack-row, .package-row, .branch-row { grid-template-columns: 1fr; }
+  .stack-row, .package-row, .branch-row { gap: .7rem; }
+  .page-heading { margin-bottom: 1.5rem; }
+  .scenario-nav { flex-direction: column; }
 
 }
 @media print {
@@ -128,9 +163,11 @@ footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem;
   .tagline { color: var(--muted); }
   .sidebar, .print, .skip, .diagram-tools, .scenario > summary::after { display: none !important; }
   .layout { display: block; padding: 1.5rem 0; max-width: none; }
+  .guide-page, .guide-page[hidden] { display: block !important; break-before: page; }
+  .guide-page:first-child { break-before: auto; }
   .overview { margin-bottom: 1.5rem; }
   .scenario { break-inside: auto; }
-  .flow-step, .scenario-context { break-inside: avoid; }
+  .flow-step, .scenario-context, .stack-row, .package-row { break-inside: avoid; }
   .scenario > summary { break-after: avoid; }
   details::details-content { content-visibility: visible !important; }
   details > :not(summary) { display: block !important; }
@@ -144,36 +181,50 @@ footer { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem;
 </style>
 </head>
 <body>
-<a class="skip" href="#scenarios">{{LABEL_SKIP}}</a>
+<a class="skip" href="#main">{{LABEL_SKIP}}</a>
 <header class="topbar"><div><span class="brand">Whywire</span><span class="tagline">{{LABEL_GUIDE}}</span></div><button class="print" type="button" hidden>{{LABEL_PRINT}}</button></header>
 <div class="layout">
-<header class="overview"><h1>{{TITLE}}</h1><p class="intro">{{SUMMARY}}</p><details class="about"><summary>{{LABEL_ABOUT}}</summary><dl class="orientation"><div><dt>{{LABEL_AUDIENCE}}</dt><dd>{{AUDIENCE}}</dd></div><div><dt>{{LABEL_SCOPE}}</dt><dd>{{SCOPE}}</dd></div><div class="revision"><dt>{{LABEL_REVISION}}</dt><dd>{{REVISION}}</dd></div></dl></details></header>
-<aside class="sidebar"><nav aria-label="{{LABEL_SCENARIOS}}"><h2>{{LABEL_SCENARIOS}}</h2><ol>{{NAV}}</ol></nav></aside>
-<main>
-<section id="scenarios" aria-label="{{LABEL_SCENARIOS}}">{{SCENARIOS}}</section>
-{{OMITTED}}
+<aside class="sidebar"><nav aria-label="{{LABEL_CONTENTS}}"><h2>{{LABEL_CONTENTS}}</h2><ol class="page-nav"><li><a data-route href="#overview">{{LABEL_OVERVIEW}}</a></li><li><a data-route href="#structure">{{LABEL_STRUCTURE}}</a></li><li><a data-route href="#scenarios">{{LABEL_SCENARIOPAGE}}</a></li></ol><ol class="scenario-nav" aria-label="{{LABEL_SCENARIOS}}">{{NAV}}</ol></nav></aside>
+<main id="main" tabindex="-1">
+<section class="guide-page overview" id="overview" aria-labelledby="overview-title"><header class="page-heading"><h1 id="overview-title" tabindex="-1">{{TITLE}}</h1><p class="intro">{{SUMMARY}}</p></header>
+<section class="page-section"><h2>{{LABEL_FEATURES}}</h2>{{FEATURES}}</section>
+<section class="page-section"><h2>{{LABEL_STACK}}</h2>{{STACK}}</section>
+<details class="about"><summary>{{LABEL_ABOUT}}</summary><dl class="orientation"><div><dt>{{LABEL_AUDIENCE}}</dt><dd>{{AUDIENCE}}</dd></div><div><dt>{{LABEL_SCOPE}}</dt><dd>{{SCOPE}}</dd></div><div class="revision"><dt>{{LABEL_REVISION}}</dt><dd>{{REVISION}}</dd></div></dl></details>{{OMITTED}}</section>
+<section class="guide-page" id="structure" aria-labelledby="structure-title"><header class="page-heading"><h1 id="structure-title" tabindex="-1">{{LABEL_STRUCTURE}}</h1>{{STRUCTURE_SUMMARY}}</header><section class="page-section"><h2>{{LABEL_PACKAGES}}</h2>{{PACKAGES}}</section></section>
+<section class="guide-page" id="scenarios" aria-labelledby="scenarios-title"><header class="page-heading"><h1 id="scenarios-title" tabindex="-1">{{LABEL_SCENARIOPAGE}}</h1></header>{{SCENARIOS}}</section>
 <footer>{{LABEL_FOOTER}}<details class="renderer-license"><summary>{{LABEL_LICENSES}}</summary><pre>{{MERMAID_LICENSE}}</pre></details></footer>
 </main>
 </div>
 <script id="mermaid-runtime">{{MERMAID_RUNTIME}}</script>
 <script id="guide-interactions">
 const scenarios = [...document.querySelectorAll('.scenario')];
+const pages = [...document.querySelectorAll('.guide-page')];
 const links = [...document.querySelectorAll('nav a')];
-function selectScenario(id) {
+function selectView(id) {
   if (typeof id !== 'string') {
-    try { id = decodeURIComponent(location.hash.slice(1)); } catch { return; }
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch { id = ''; }
   }
   const selected = scenarios.find(scenario => scenario.id === id);
-  if (!selected) return;
-  for (const scenario of scenarios) scenario.open = scenario === selected;
+  const page = pages.find(page => page.id === (selected ? 'scenarios' : id)) ?? pages[0];
+  for (const item of pages) item.hidden = item !== page;
+  document.querySelector('.scenario-nav').hidden = page.id !== 'scenarios';
+  if (selected) for (const scenario of scenarios) scenario.open = scenario === selected;
+  else if (page.id === 'scenarios' && !scenarios.some(scenario => scenario.open)) scenarios[0].open = true;
   for (const link of links) {
-    if (link.hash === '#' + selected.id) link.setAttribute('aria-current', 'location');
+    if (link.hash === '#' + page.id || selected && link.hash === '#' + selected.id) link.setAttribute('aria-current', 'location');
     else link.removeAttribute('aria-current');
   }
+  return selected ?? page;
 }
-for (const link of links) link.addEventListener('click', () => selectScenario(link.hash.slice(1)));
-window.addEventListener('hashchange', selectScenario);
-selectScenario();
+for (const link of document.querySelectorAll('[data-route]')) link.addEventListener('click', () => selectView(link.hash.slice(1)));
+window.addEventListener('hashchange', () => {
+  if (location.hash === '#main') return;
+  const target = selectView();
+  const heading = target.querySelector('h1, summary');
+  heading?.focus({ preventScroll: true });
+  target.scrollIntoView();
+});
+selectView();
 const diagrams = [...document.querySelectorAll('.diagram')];
 // Render into Mermaid's visible body staging area, including closed scenarios.
 // This preserves text measurements and prepares every diagram for printing.

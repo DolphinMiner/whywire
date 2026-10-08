@@ -10,22 +10,28 @@ material.
 
 - Read the skill and the example relevant to a change before editing.
 - Preserve the user's question. Architecture explanations need not become audits.
-- Lead with the product, then its principal scenarios, a Mermaid diagram for
-  every included scenario, and source entry points. Keep visible prose brief;
-  put supporting detail in expandable sections and state uncovered scope.
+- Keep one offline HTML with three hash-navigable pages: Overview, Code structure,
+  and Scenarios. Default to Overview. Explain the product and verified technology
+  stack, major package responsibilities, then each scenario's Mermaid request
+  flow and source entry points. Keep supporting detail expandable and state
+  uncovered scope. Do not infer technology usage from package names alone.
 - Keep source observations, runtime observations, inference, proposals, and unknowns
   separate. Do not invent benchmark numbers, production incidents, or compatibility.
 - A reference used by the skill must ship inside its directory.
 - Reuse the bundled builder and template before adding dependencies or renderers.
   The builder uses the Node standard library and embeds the vendored Mermaid
-  12.1.0 runtime once. Keep producing one offline page with no CDN or sibling
+  12.1.0 runtime once. Keep producing one offline file with no CDN or sibling
   assets. Preserve Mermaid's bundled license when updating its runtime.
 - Require authored `mermaid` in each scenario. Prefer sequence diagrams with
   real participants, calls, returns, and relevant branches or async handoffs;
   never derive a step-card substitute from `steps`. Template-owned strict
   security settings cannot be overridden by input directives or frontmatter.
-- Text, source references, and native disclosures must remain readable without
-  JavaScript. Diagram rendering errors must be visible with source available.
+- Text, source references, and native disclosures for every page must remain
+  readable without JavaScript. Print includes all pages. Diagram rendering
+  errors must be visible with source available.
+- Keep step explanations, actual branch conditions/results, and reading guidance
+  distinct. Show source symbols before their paths; use numbered explanation
+  rows without arrows that imply additional diagram semantics.
 - Run `npm run check` for changes to examples, Mermaid, or packaging. Run
   `npm run check:guide` for HTML generation changes and `npm run check:install`
   when changing discovery, metadata, or installed resources.

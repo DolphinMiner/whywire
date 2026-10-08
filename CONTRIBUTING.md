@@ -11,11 +11,16 @@ with the smallest shareable source that makes the answer checkable.
 4. Run the repository checks and inspect the resulting HTML in a browser.
 
 For a project guide, verify that a newcomer can explain what the product does,
-follow every included scenario to its outcome, and find the relevant code.
+recognize its verified stack and major package responsibilities, follow every
+included scenario to its outcome, and find the relevant code. Keep Overview,
+Code structure, and Scenarios as separate pages within the one HTML file.
 Keep the visible explanation brief; preserve evidence and deeper details in
 expandable sections. Author a Mermaid diagram for each scenario from inspected
 source; request flows should show participants, calls, returns, and relevant
 conditions or async handoffs. Do not turn `steps` into a substitute diagram.
+Separate actual branches from code-reading suggestions; keep conditions and
+results distinct, and show source symbols before paths. New stack and package
+claims must have inspected sources, not assumptions based on folder names.
 A one-scenario fixture does not establish coverage of a whole product.
 
 Keep private repositories, logs, credentials, and customer material out of issues
@@ -53,11 +58,13 @@ npm run demo:guide
 
 This uses `examples/cache-read/guide.json` to generate
 `examples/cache-read/guide.html`. Open it locally and check the narrow viewport,
-scenario navigation, expandable details, and source references. Confirm that
+all three page links, direct scenario links, browser back/forward navigation,
+expandable details, and source references. Confirm that
 both sequence diagrams render offline, their calls and returns remain legible,
 and Fit to width / Actual size works without page overflow at a narrow viewport.
 Check that a render failure displays an error and opens its source. With JavaScript
-disabled, text, references, and native disclosures must remain readable.
+disabled, every page's text, references, and native disclosures must remain
+readable. Print must include all pages regardless of the current page.
 Only the HTML is required for reading; the JSON is an editable authoring input.
 
 To refresh the checked-in README screenshot and reference previews:
@@ -66,8 +73,10 @@ To refresh the checked-in README screenshot and reference previews:
 npm run previews
 ```
 
-The primary screenshot, `docs/previews/guide.png`, must show the actual generated
-HTML. Older reference previews render existing Mermaid with the official CLI,
+The scenario screenshot, `docs/previews/guide.png`, and the overview and structure
+screenshots, `docs/previews/guide-overview.png` and
+`docs/previews/guide-structure.png`, must show the actual generated HTML.
+Older reference previews render existing Mermaid with the official CLI,
 run the pictured examples, and show their observed output in a documentation
 layout. Inspect the changed PNGs in `docs/previews/` before committing. Label
 teaching fixtures honestly; do not use private project content in public images.

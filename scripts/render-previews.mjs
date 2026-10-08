@@ -28,9 +28,14 @@ try {
   await guidePage.goto(pathToFileURL(guide).href, { waitUntil: 'load' });
   await guidePage.waitForFunction(() => [...document.querySelectorAll('.diagram')].every(diagram => ['ready', 'error'].includes(diagram.dataset.state)));
   if (await guidePage.$('.diagram[data-state="error"]')) throw new Error('Public guide contains a Mermaid rendering error');
-  await guidePage.screenshot({ path: path.join(output, 'guide.png'), fullPage: true });
+  for (const [hash, name] of [['overview', 'guide-overview'], ['structure', 'guide-structure'], ['scenarios', 'guide']]) {
+    await guidePage.goto(pathToFileURL(guide).href + '#' + hash, { waitUntil: 'load' });
+    await guidePage.click('#' + hash + ' h1');
+    await guidePage.evaluate(() => window.scrollTo(0, 0));
+    await guidePage.screenshot({ path: path.join(output, name + '.png'), fullPage: true });
+  }
   await guidePage.close();
-  console.log('Rendered docs/previews/guide.png from the standalone HTML.');
+  console.log('Rendered three page previews from the standalone HTML.');
   const config = path.join(temporary, 'mermaid.json');
   await writeFile(config, JSON.stringify({
     theme: 'base',

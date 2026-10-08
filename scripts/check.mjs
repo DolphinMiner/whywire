@@ -91,11 +91,66 @@ try {
       else request.continue();
     });
     const demo = pathToFileURL(path.join(root, 'examples/cache-read/guide.html')).href;
+    const input = JSON.parse(await readFile(path.join(root, 'examples/cache-read/guide.json'), 'utf8'));
+    const scenarioIds = input.scenarios.map(scenario => `scenario-${scenario.id}`);
+    const visiblePages = () => page.$$eval('.guide-page', elements => elements.filter(element => element.getBoundingClientRect().height > 0).map(element => element.id));
+    const expectView = async (id, hash) => {
+      await page.waitForFunction((expected, fragment) => {
+        const visible = [...document.querySelectorAll('.guide-page')].filter(element => element.getBoundingClientRect().height > 0);
+        return visible.length === 1 && visible[0].id === expected && location.hash === fragment;
+      }, {}, id, hash);
+      assert.deepEqual(await visiblePages(), [id], 'Only the selected page is visible');
+      assert.equal(await page.$eval(`.page-nav a[href="#${id}"]`, link => link.getAttribute('aria-current')), 'location');
+      assert.equal(await page.$eval('.scenario-nav', nav => nav.hidden), id !== 'scenarios', 'Scenario choices belong only to the Scenarios page');
+    };
+    const expectScenario = async id => {
+      await expectView('scenarios', '#' + id);
+      assert.deepEqual(await page.$$eval('.scenario[open]', elements => elements.map(element => element.id)), [id], 'A scenario deep link selects exactly that scenario');
+      assert.equal(await page.$eval(`.scenario-nav a[href="#${id}"]`, link => link.getAttribute('aria-current')), 'location');
+    };
     await page.goto(demo);
     await page.waitForFunction(() => [...document.querySelectorAll('.diagram')].every(d => ['ready', 'error'].includes(d.dataset.state)));
     assert.deepEqual(await page.$$eval('.diagram', elements => elements.map(d => ({ state: d.dataset.state, text: d.querySelector('svg')?.textContent.includes('Caller') }))), [{ state: 'ready', text: true }, { state: 'ready', text: true }], 'Both visible and initially closed scenarios must render actual SVG');
+    await expectView('overview', '');
+    assert.deepEqual(await page.$$eval('.scenario[open]', elements => elements.map(element => element.id)), [scenarioIds[0]], 'First scenario remains expanded when the guide opens');
+    await page.click('.page-nav a[href="#structure"]');
+    await expectView('structure', '#structure');
+    await page.click('.page-nav a[href="#scenarios"]');
+    await expectView('scenarios', '#scenarios');
+    await page.click(`.scenario-nav a[href="#${scenarioIds[1]}"]`);
+    await expectScenario(scenarioIds[1]);
+    for (const size of ['actual', 'fit']) {
+      await page.click(`#${scenarioIds[1]} .diagram-tools button[data-size="${size}"]`);
+      assert.equal(await page.$eval(`#${scenarioIds[1]} .diagram`, diagram => diagram.dataset.size), size, 'Selected scenario sizing controls must work after navigation');
+      assert.equal(await page.$eval(`#${scenarioIds[1]} .diagram-tools button[data-size="${size}"]`, button => button.getAttribute('aria-pressed')), 'true');
+    }
+    await page.click('.page-nav a[href="#overview"]');
+    await expectView('overview', '#overview');
+    const featureHash = await page.$eval('.feature-list a[data-route]', link => link.hash);
+    await page.click('.feature-list a[data-route]');
+    await expectScenario(featureHash.slice(1));
+    await page.goBack();
+    await expectView('overview', '#overview');
+    await page.goForward();
+    await expectScenario(featureHash.slice(1));
+    await page.reload();
+    await expectScenario(featureHash.slice(1));
+    await page.goto(demo + '#' + scenarioIds[1]);
+    await expectScenario(scenarioIds[1]);
+    await page.waitForFunction(() => [...document.querySelectorAll('.diagram')].every(d => ['ready', 'error'].includes(d.dataset.state)));
 
-    const invalid = JSON.parse(await readFile(path.join(root, 'examples/cache-read/guide.json'), 'utf8'));
+    // Exercise print lifecycle and CSS without treating it as visual PDF validation.
+    const beforePrint = await page.$$eval('details', elements => elements.map(element => element.open));
+    await page.evaluate(() => window.dispatchEvent(new Event('beforeprint')));
+    await page.emulateMediaType('print');
+    assert.deepEqual(await visiblePages(), ['overview', 'structure', 'scenarios'], 'Print must include all three pages, including hidden pages');
+    assert(await page.$$eval('details', elements => elements.every(element => element.open)), 'Print must expand source explanations');
+    await page.emulateMediaType('screen');
+    await page.evaluate(() => window.dispatchEvent(new Event('afterprint')));
+    await expectScenario(scenarioIds[1]);
+    assert.deepEqual(await page.$$eval('details', elements => elements.map(element => element.open)), beforePrint, 'After printing, previous disclosures must be restored');
+
+    const invalid = structuredClone(input);
     invalid.scenarios[0].mermaid = 'sequenceDiagram\nThis is invalid syntax';
     invalid.scenarios[1].mermaid = 'sequenceDiagram\nC->>R: <img src="https://example.invalid/probe" onerror="alert(1)">';
     const failurePath = path.join(output, 'failure.html');
@@ -119,9 +174,12 @@ try {
 
     await page.setJavaScriptEnabled(false);
     await page.goto(demo);
+    assert.deepEqual(await visiblePages(), ['overview', 'structure', 'scenarios'], 'No-script readers must be able to read every page');
+    assert(await page.$eval('.feature-list', element => element.getBoundingClientRect().height > 0), 'Product capabilities remain readable without JavaScript');
+    assert(await page.$eval('.package-list', element => element.getBoundingClientRect().height > 0), 'Package responsibilities remain readable without JavaScript');
     assert.equal(await page.$$eval('.diagram-source code', sources => sources.filter(source => source.textContent.startsWith('sequenceDiagram')).length), 2);
     assert(await page.$eval('noscript', element => element.getBoundingClientRect().height > 0), 'No-script readers need an honest visible explanation');
-    console.log('PASS: actual offline SVG rendering, hidden scenarios, isolated syntax errors, hostile labels, and no-script fallback.');
+    console.log('PASS: three-page navigation/history, print restoration, actual offline SVG, isolated errors, hostile labels, and no-script reading.');
   } finally { await browser.close(); }
   for (const [index, filename] of diagramDocuments.entries()) {
     console.log(`Rendering ${path.relative(root, filename)}`);
